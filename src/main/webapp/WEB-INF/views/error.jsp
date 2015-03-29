@@ -29,7 +29,7 @@ $(document).ready(function(){
 
 	<div id="bigBox">
 		<span>Felmeddelande: <font color="red"><c:out value="${message}"></c:out></font></span><br><br>
-		<span><a href="${page}">Gå tillbaka</a></span><br><br>
+		<span><a href="${returnpage}">Gå tillbaka</a></span><br><br>
 		<button id="showErrorButton">Visa fel</button>
 		<textarea rows="47" cols="108" id="errorWindow">${exception}</textarea>
 	</div>

@@ -101,17 +101,3 @@ nav ul ul ul {
 	border-radius: 10px;
 }
 /*end of bottom panel*/
-
-#ingredientList {
-	background-color: #ddd;
-	width: 300px;
-	height: 182px;
-	margin-top: 10px;
-	overflow:hidden; overflow-y:scroll;
-	padding-left: 5px;
-}
-
-#ingredientList li {
-	list-style: none;
-}
-

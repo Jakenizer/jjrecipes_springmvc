@@ -1,3 +1,29 @@
-.ingredientHeader {
+.ingredientGroup {
 	float: left;
+}
+
+#addIngredient {
+	margin-left: 5px;
+}
+
+textarea {
+	width: 780px;
+	height: 380px;
+}
+
+input[name="name"] {
+	width: 780px;
+}
+
+#ingredientList {
+	background-color: #ddd;
+	width: 300px;
+	height: 182px;
+	margin-top: 10px;
+	overflow:hidden; overflow-y:scroll;
+	padding-left: 5px;
+}
+
+#ingredientList li {
+	list-style: none;
 }

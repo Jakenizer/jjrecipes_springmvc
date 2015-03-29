@@ -12,13 +12,22 @@
 <script src="<c:url value="/resources/js/jquery-ui-1.11.4/jquery-ui.min.js" />"></script>
 
 
-<title>JJRecipes</title>
+<title>JJRecipes create modify recipe</title>
 <script type="text/javascript">
 $(document).ready(function(){
     $('#addIngredient').click(function() {		
-       var val = $('#newIngredient').val();
-    	 var numItems =  $("#ingredientList li").length;
-       $('#ingredientList').append('<li><input type="checkbox" name="ingredient" value="' + val + '">' + val + '</li>');
+       var name = $('#newIngredient').val();
+       var amount = $('#amount').val();
+       var type = $('#selectMeasureType').val();
+       var val = name;
+       if (amount) {
+    	   val += " " + amount;
+    	   if (type)
+    		   val += " " + type;;
+       }
+    	 //var numItems =  $("#ingredientList li").length;
+    	 
+       $('#ingredientList').append('<li><input type="checkbox" name="ingredient" value="' + val + '" checked>' + val + '</li>');
     });
 });
 </script>
@@ -32,21 +41,24 @@ $(document).ready(function(){
 
 	<div id="bigBox">
 		<form action="upload" method="post" enctype="multipart/form-data">
-			Namn:<br><input name="name" required="required" value="${recipe.name}"/><br><br>
-			Beskrivning:<br><textarea rows="15" cols="50" name="content"></textarea><br><br>
-			<div class="ingredientHeader">Ny ingrediens:</div><div class="ingredientHeader">Mängd:</div><div class="ingredientHeader">Mått:</div><br>
-			<input id="newIngredient"/>  <input type="number" step="1" min="0" id="amount"> 
-			<select name="selectMeasureType">
- 			   <c:forEach var="item" items="${measuretypes}">
+			Namn:<br><input name="name" required="required" maxlength="100" value="${recipe.name}"/><br><br>
+			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1000"></textarea><br><br>
+			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>
+			<div class="ingredientGroup" style="width:180px">Mängd:<br><input type="number" value="0" step="1" min="0" id="amount"></div>
+			<div class="ingredientGroup">Mått:<br>
+			<select id="selectMeasureType">
+ 			   <c:forEach var="item" items="${measuretypes}"> 
   			      <option value="${item}">${item}</option>
  			   </c:forEach>
 			</select>
+			</div>
+			<br>
+			
 			<button type='button' id="addIngredient">Lägg till</button><br>
 			<div>
-				<ul id="ingredientList">
-				</ul>
+				<ul id="ingredientList"></ul>
 		  </div>
-		  <input type="file" name="fileUpload" size="50" /><br><br>
+		  <input type="file" name="fileUpload" size="50"><br><br>
 		  <input type="submit" value="Spara">
 		</form>
 	</div>

@@ -15,13 +15,14 @@ public class Ingredient extends BaseEntity{
 	public enum MeasureType {
 		TSK("tsk"),
 		MSK("msk"),
+		KRM("krm"),
 		MILLI("ml"),
 		CENTI("cl"),
 		DECI("dl"),
 		LITRE("liter"),
 		GRAMS("gram"),
 		KILO("kg"),
-		NONE("[none]");
+		NONE("-");
 		
 		private String text;
 		
@@ -56,6 +57,7 @@ public class Ingredient extends BaseEntity{
 	public MeasureType getMeasureType() {
 		return measureType;
 	}
+	
 	public void setMeasureType(MeasureType measureType) {
 		this.measureType = measureType;
 	}

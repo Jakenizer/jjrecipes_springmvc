@@ -18,10 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import se.jjrecipes.backing.RecipeBacking;
+import se.jjrecipes.data.TagData;
 import se.jjrecipes.data.UserData;
 import se.jjrecipes.entity.Ingredient;
 import se.jjrecipes.entity.Ingredient.MeasureType;
 import se.jjrecipes.entity.Recipe;
+import se.jjrecipes.entity.Tag;
 import se.jjrecipes.entity.User;
 import se.jjrecipes.hibernate.HibernateUtil;
  
@@ -78,7 +80,7 @@ public class RecipeController {
             return mv;
         } catch (HibernateException | IOException e) {
         	mv.addObject("message", "Det bidde fel.");
-        	mv.addObject("page", "create_modify_recipe");
+        	mv.addObject("returnpage", "create_modify_recipe");
         	mv.addObject("exception", e.getMessage());
             mv.setViewName("error");
         	return mv;
@@ -100,6 +102,14 @@ public class RecipeController {
 	@ModelAttribute
 	public void prepareRecipe(RecipeBacking recept) {
 		
+	}
+	
+	@RequestMapping("/tags") 
+	public ModelAndView tags() {
+		List<Tag> tags = TagData.listTags();
+		ModelAndView mv = new ModelAndView("tags");
+		mv.addObject("tags", tags);
+		return mv;
 	}
 	
 	@RequestMapping("/test")

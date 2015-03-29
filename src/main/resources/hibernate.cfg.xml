@@ -15,6 +15,8 @@
 		<mapping class="se.jjrecipes.entity.Recipe"></mapping>
 		<mapping class="se.jjrecipes.entity.Ingredient"></mapping>
 		<mapping class="se.jjrecipes.entity.Favourite"></mapping>
+		<mapping class="se.jjrecipes.entity.Tag"></mapping>
+		
 		
 		
 	</session-factory>

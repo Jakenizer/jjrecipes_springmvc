@@ -1,0 +1,12 @@
+#tagList {
+	background-color: #ddd;
+	width: 300px;
+	height: 700px;
+	margin-top: 10px;
+	overflow:hidden; overflow-y:scroll;
+	padding-left: 5px;
+}
+
+#tagList li {
+	list-style: none;
+}

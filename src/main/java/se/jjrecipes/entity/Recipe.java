@@ -3,6 +3,7 @@ package se.jjrecipes.entity;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -14,8 +15,10 @@ public class Recipe extends BaseEntity {
 	private String name;
 	private String content;
 	private Set<Ingredient> ingredients;
+	private Set<Tag> tags;
 	private byte[] image;
 	
+	@Column(length = 100)
 	public String getName() {
 		return name;
 	}
@@ -24,6 +27,7 @@ public class Recipe extends BaseEntity {
 		this.name = name;
 	}
 	
+	@Column(length = 1000)
 	public String getContent() {
 		return content;
 	}
@@ -50,6 +54,15 @@ public class Recipe extends BaseEntity {
 //		this.usersThatFav = usersThatFav;
 //	}
 	
+	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
+
 	public byte[] getImage() {
 		return image;
 	}
