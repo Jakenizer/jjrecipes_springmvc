@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -29,8 +30,9 @@ import se.jjrecipes.hibernate.HibernateUtil;
  
 @Controller
 public class RecipeController {
+
 	
-	@RequestMapping(value="/upload", method=RequestMethod.POST)
+	@RequestMapping(value="/createRecipe", method=RequestMethod.POST)
     public ModelAndView handleFileUpload(@RequestParam("name") String name, 
     		@RequestParam(value = "ingredient", required = false) String[] ingredients, 
     		@RequestParam("content") String content,
@@ -104,13 +106,28 @@ public class RecipeController {
 		
 	}
 	
-	@RequestMapping("/tags") 
-	public ModelAndView tags() {
-		List<Tag> tags = TagData.listTags();
-		ModelAndView mv = new ModelAndView("tags");
-		mv.addObject("tags", tags);
-		return mv;
-	}
+//	@RequestMapping("/tags") 
+//	public ModelAndView tags() {
+//		TreeSet<Tag> tags = TagData.getSortedList();
+//		ModelAndView mv = new ModelAndView("tags");
+//		mv.addObject("tags", tags);
+//		return mv;
+//	}
+	
+//	@RequestMapping("/nyTagg")
+//	public ModelAndView newTag(@RequestParam("newTag") String tagName) {
+//		SessionFactory sf = HibernateUtil.getSessionFactory();
+//		Session ses = sf.openSession();
+//		ses.beginTransaction();
+//		
+//		Tag tag = new Tag();
+//		tag.setName(tagName);
+//		ses.save(tag);
+//		
+//		ses.getTransaction().commit();
+//		ModelAndView mv = new ModelAndView("redirect:tags");
+//		return mv;
+//	}
 	
 	@RequestMapping("/test")
 	public ModelAndView testa(
@@ -125,33 +142,41 @@ public class RecipeController {
 		u.setFirstName(name);
 		u.setLastName("svensson");*/
 		
+		Tag tag = new Tag();
+		tag.setName("paj");
+		ses.save(tag);
 		/*
 		Recipe r1 = new Recipe();
-		r1.setName("gelehallon");
-		r1.setContent("koka ihop allt");
+		r1.setName("meaty");
+		r1.setContent("stek den");
 		Ingredient i1 = new Ingredient();
-		i1.setName("salt");
-		i1.setAmount(14);
-		i1.setMeasureType(MeasureType.CENTI);
+		i1.setName("kalvfile");
+		i1.setAmount(2);
+		i1.setMeasureType(MeasureType.KILO);
 		i1.setRecipe(r1);
 		Set<Ingredient> ins = new HashSet<Ingredient>();
 		ins.add(i1);
-	
 		r1.setIngredients(ins);
 		
-		ses.save(r1);
+
+		Set<Tag> tags = new HashSet<Tag>();
+		tags.add(tag);
+		
+		r1.setTags(tags);
+		
+		ses.save(r1);*/
 		//Long inte = (Long) ses.save(u);
 		
-		ses.getTransaction().commit();*/
+		ses.getTransaction().commit();
 		
-		User user = UserData.findUser(3L);
+		//User user = UserData.findUser(3L);
 		
 		
 				
 		/*ModelAndView mv = new ModelAndView("helloworld");
 		mv.addObject("message", "mopp");
 		mv.addObject("name", name);*/
-		ModelAndView mv = new ModelAndView("sven");
+		ModelAndView mv = new ModelAndView("tags");
 		return mv;
 	}
 }

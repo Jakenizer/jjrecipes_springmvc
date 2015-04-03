@@ -5,6 +5,10 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -54,7 +58,13 @@ public class Recipe extends BaseEntity {
 //		this.usersThatFav = usersThatFav;
 //	}
 	
-	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+//	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "recipes")
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "tag_recipe", joinColumns = { 
+			@JoinColumn(name = "recipe_id", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "tag_id", 
+					nullable = false, updatable = false) })
 	public Set<Tag> getTags() {
 		return tags;
 	}

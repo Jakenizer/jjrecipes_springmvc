@@ -40,7 +40,7 @@ $(document).ready(function(){
 
 
 	<div id="bigBox">
-		<form action="upload" method="post" enctype="multipart/form-data">
+		<form action="createRecipe" method="post" enctype="multipart/form-data">
 			Namn:<br><input name="name" required="required" maxlength="100" value="${recipe.name}"/><br><br>
 			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1000"></textarea><br><br>
 			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>

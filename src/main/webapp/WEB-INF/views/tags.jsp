@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
@@ -15,21 +15,28 @@
 	<jsp:include page="topPanel.jsp" flush="true"/>
 
 	<div id="bigBox">	
-		<form action="" method="get">
-			<div class="contentBox">
-				Taggar:<br>
-			<div>
-				<ul id="tagList">
-				 <c:forEach var="item" items="${measuretypes}"> 
-  			      <li><input type="checkbox" name="ingredient" value="' + val + '" checked>${item}</li>
- 			   </c:forEach>
-				</ul>
-		  </div>
-			</div>
-			<div class="contentBox">
-			
-			</div>	
-		</form>
+		<div class="contentBox">
+			<form action="removeTag" method="get">
+				Välj de taggar som skall tas bort<br>
+				<div>
+					<ul id="tagList">
+					 <c:forEach var="item" items="${tags}"> 
+	  			      <li><input type="checkbox" name="tagItem" value="${item.id}">${item.name}</li>
+	 			   </c:forEach>
+					</ul>
+			  </div>
+			  <input type="submit" value="Ta bort markerade">
+			</form>
+		</div>	
+		
+		
+		<div class="contentBox">
+			<form action="nyTagg">
+				Skapa ny tag:<br>
+				<input name="newTag" style="width:290px"> <input type="submit" value="Skapa tag">
+			</form>
+		</div>
+		
 	</div>
 
 	<jsp:include page="bottomPanel.jsp" flush="true"/>

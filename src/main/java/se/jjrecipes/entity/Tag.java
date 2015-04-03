@@ -1,18 +1,26 @@
 package se.jjrecipes.entity;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "tag")
-public class Tag extends BaseEntity {
+public class Tag extends BaseEntity implements Comparable<Tag> {
 	
 	private String name;
-	private Recipe recipe;
+	//private Set<Recipe> recipes;
 
+	@Column(name="name", unique=true)
 	public String getName() {
 		return name;
 	}
@@ -20,14 +28,18 @@ public class Tag extends BaseEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recipe_id", nullable = true)
-	public Recipe getRecipe() {
-		return recipe;
+	/*
+	@OneToMany(mappedBy = "tags")
+	public Set<Recipe> getRecipes() {
+		return recipes;
 	}
 
-	public void setRecipe(Recipe recipe) {
-		this.recipe = recipe;
+	public void setRecipes(Set<Recipe> recipes) {
+		this.recipes = recipes;
+	}
+*/
+	@Override
+	public int compareTo(Tag otherTag) {
+		return name.compareToIgnoreCase(otherTag.getName());
 	}
 }

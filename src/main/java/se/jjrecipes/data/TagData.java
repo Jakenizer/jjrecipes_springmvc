@@ -1,6 +1,7 @@
 package se.jjrecipes.data;
 
 import java.util.List;
+import java.util.TreeSet;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -16,5 +17,9 @@ public class TagData extends AbstractData {
 		Query q = session.createQuery("FROM Tag tag"); 
 		List<Tag> tags = (List<Tag>) q.list();
 		return tags;
+	}
+	
+	public static TreeSet<Tag> getSortedList() {
+		return new TreeSet<Tag>(listTags());
 	}
 }

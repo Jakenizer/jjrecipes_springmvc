@@ -1,12 +1,19 @@
 #tagList {
 	background-color: #ddd;
-	width: 300px;
+	width: 370px;
 	height: 700px;
 	margin-top: 10px;
 	overflow:hidden; overflow-y:scroll;
 	padding-left: 5px;
+	padding-top: 5px;
 }
 
 #tagList li {
 	list-style: none;
+}
+
+.contentBox {
+	float: left;
+	width: 390px;
+	height: 700px;
 }
