@@ -1,0 +1,47 @@
+.lefters {
+	float:left;
+}
+
+li.listElement {
+	height: 30px;
+	display: table;
+	width: 70%;
+	margin-bottom: 5px;	
+}
+
+li.listElement div {
+	text-align: center;
+  border-radius: 12px;
+  border: 2px solid #8AC007;
+  margin-bottom: 5px;
+  height: 40px;
+  vertical-align: middle;
+  display: table-cell;
+}
+
+li.listElement a {
+	display: table-cell;
+  	height: 30px;
+  	width: 300px;
+  	text-decoration: none;
+  	color: black;
+}
+
+ul {
+	padding-left: 0px;
+}
+
+.cont {
+	height: 750px;
+	box-shadow: 0px 0px 9px rgba(0,0,0,0.15);
+	border-radius: 10px;
+	float: left;
+	width: 48%;
+}
+
+#leftDiv {
+	margin-right: 26px;
+}
+
+#rightDiv {
+}

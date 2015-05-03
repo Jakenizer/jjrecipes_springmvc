@@ -1,5 +1,6 @@
 package se.jjrecipes.data;
 
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Query;
@@ -20,13 +21,36 @@ public class RecipeData {
 		session.getTransaction().commit();
 	}
 	
-	public static Recipe findRecipe(int id) {
+	public static Recipe findRecipe(Long id) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Query query = session.createQuery("FROM Recipe re where re.id=:recipe_id");
 		query.setParameter("recipe_id", id);
 		Recipe recipe = (Recipe) query.uniqueResult();
 		session.close();
 		return recipe;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Recipe> findRecipes(String searchString) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		List<Recipe> recipes = session.createCriteria(Recipe.class).list();
+
+		
+		/*Session session = HibernateUtil.getSessionFactory().openSession();
+		Query q = session.createQuery("From Recipe re where re.name LIKE :=searchString");
+		q.setParameter("searchString", searchString);
+		List<Recipe> recipes = q.list();*/
+		session.close();
+		return recipes;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Recipe> listRecipes() {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Query q = session.createQuery("From Recipe re");
+		List<Recipe> recipes = q.list();
+		session.close();
+		return recipes;
 	}
 	
 	public static void deleteRecipe(Recipe r) {

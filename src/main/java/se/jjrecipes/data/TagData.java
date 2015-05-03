@@ -16,6 +16,7 @@ public class TagData extends AbstractData {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Query q = session.createQuery("FROM Tag tag"); 
 		List<Tag> tags = (List<Tag>) q.list();
+		session.close();
 		return tags;
 	}
 	

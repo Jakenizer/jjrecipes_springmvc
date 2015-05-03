@@ -1,15 +1,7 @@
 package se.jjrecipes.entity;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -18,6 +10,10 @@ public class User extends BaseEntity{
 	
 	private String firstName;
 	private String lastName;
+	private String username;
+	private String password;
+	//private Set<UserRole> userRole;
+
 	
 	@Column(name = "firstname")
 	public String getFirstName() {
@@ -31,21 +27,37 @@ public class User extends BaseEntity{
 	public String getLastName() {
 		return lastName;
 	}
+	
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 	
-	/*@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "user_recipe", joinColumns = { 
-			@JoinColumn(name = "user_id", nullable = false, updatable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "recipe_id", 
-					nullable = false, updatable = false) })
-	public Set<Recipe> getFavourites() {
-		return favourites;
+	public String getUserName() {
+		return username;
 	}
-
-	public void setFavourites(Set<Recipe> favourites) {
-		this.favourites = favourites;
+	
+	public void setUserName(String userName) {
+		this.username = userName;
+	}
+	
+	public String getPassword() {
+		return this.password;
+	}
+ 
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	/*
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_role", joinColumns = { 
+			@JoinColumn(name = "user_id", nullable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) })
+	public Set<UserRole> getUserRole() {
+		return userRole;
+	}
+	
+	public void setUserRole(Set<UserRole> userRole) {
+		this.userRole = userRole;
 	}*/
 	
 	@Override

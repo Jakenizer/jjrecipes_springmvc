@@ -10,6 +10,7 @@ import se.jjrecipes.hibernate.HibernateUtil;
 
 public class UserData {
 	
+	@SuppressWarnings("unchecked")
 	public static List<User> listUsers() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Query q = session.createQuery("FROM User us"); 
@@ -24,5 +25,11 @@ public class UserData {
 		return (User) q.uniqueResult();
 	}
 	
+	public static User findUser(String username) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Query q = session.createQuery("FROM User us where username=:username"); 
+		q.setParameter("username", username);
+		return (User) q.uniqueResult();
+	}
 	
 }

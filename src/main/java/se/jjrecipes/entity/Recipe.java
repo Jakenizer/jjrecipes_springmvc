@@ -1,5 +1,6 @@
 package se.jjrecipes.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,8 +19,8 @@ public class Recipe extends BaseEntity {
 
 	private String name;
 	private String content;
-	private Set<Ingredient> ingredients;
-	private Set<Tag> tags;
+	private Set<Ingredient> ingredients = new HashSet<Ingredient>();
+	private Set<Tag> tags = new HashSet<Tag>();
 	private byte[] image;
 	
 	@Column(length = 100)
@@ -40,7 +41,7 @@ public class Recipe extends BaseEntity {
 		this.content = content;
 	}
 	
-	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Set<Ingredient> getIngredients() {
 		return ingredients;
 	}
@@ -60,7 +61,7 @@ public class Recipe extends BaseEntity {
 	
 //	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "recipes")
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "tag_recipe", joinColumns = { 
 			@JoinColumn(name = "recipe_id", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "tag_id", 

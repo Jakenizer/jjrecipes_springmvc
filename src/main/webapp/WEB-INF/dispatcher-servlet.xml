@@ -21,11 +21,13 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 			<value>.jsp</value>
 		</property>
 	</bean>
-	
+	<!-- 
 	<bean id="multipartResolver"
           class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="1048576"/>
-    </bean>
+    </bean> -->
+    
+
 	
 	<mvc:annotation-driven/>
 	<mvc:resources mapping="/resources/**" location="/resources/theme/" /> 

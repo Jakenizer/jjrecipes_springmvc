@@ -1,3 +1,6 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<script src="<c:url value="/resources/js/main.js" />"></script>
+
 <div id="topContainer">
 	<nav id="listCont">
 		<ul>
@@ -10,6 +13,12 @@
 				</ul>
 			</li>
 			<li class="topMenuItem"><a href="tags"> Hantera taggar</a></li>
+			<li class="topMenuItem"><a href="" onclick="logout(); return false;"> Logga ut</a></li>
 		</ul>
 	</nav>
 </div>
+
+<c:url var="logoutUrl" value="/logout" />
+<form name="logoutForm" action="${logoutUrl}" method="post" hidden="hidden">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+</form>

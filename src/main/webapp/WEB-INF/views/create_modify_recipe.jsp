@@ -1,8 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
 <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
 <link href="<c:url value="/resources/css/create_modify_recipe.css" />" rel="stylesheet">
 
@@ -40,7 +44,7 @@ $(document).ready(function(){
 
 
 	<div id="bigBox">
-		<form action="createRecipe" method="post" enctype="multipart/form-data">
+		<form action="createRecipe?${_csrf.parameterName}=${_csrf.token}" method="post" enctype="multipart/form-data">
 			Namn:<br><input name="name" required="required" maxlength="100" value="${recipe.name}"/><br><br>
 			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1000"></textarea><br><br>
 			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>
@@ -60,6 +64,10 @@ $(document).ready(function(){
 		  </div>
 		  <input type="file" name="fileUpload" size="50"><br><br>
 		  <input type="submit" value="Spara">
+		<!-- <sec:csrfMetaTags /> 
+		<input type="hidden"
+			name="${_csrf.parameterName}"
+			value="${_csrf.token}"/>-->
 		</form>
 	</div>
 
