@@ -23,18 +23,13 @@
                var token = $("meta[name='_csrf']").attr("content");
 					var header = $("meta[name='_csrf_header']").attr("content");
             	var id = event.target.id;
-              /* $('#rightDiv').load('/JJRecipes/test', {redId:55}, function(response, status, xhr ) {
-            		xhr.setRequestHeader(header, token);
-
-               });*/
                
-
                var headers = {};
    				headers[header] = token;
 					
                 $.ajax({
                     type : 'POST',
-                    url : '/JJRecipes/test',
+                    url : '/JJRecipes/loadRecipe',
                     data: {redId : id},
                     headers: headers,
                     crossDomain : true,
@@ -42,19 +37,27 @@
                 		$('#rightDiv').html("");
                 		$('#rightDiv').append("<h2>" + data.name + "</h2>");
                 		$('#rightDiv').append("<img id='recipeImage' src='data:image/png;base64," + data.image + "'/>");
-                 });;
+                		$('#rightDiv').append("<button type='button' id='expandBtn'>expandera</button>");
+                		$('#rightDiv').on('click', '#expandBtn', function(){
+                			$('#rightDiv').toggleClass('expandedRecipe');
+                		   $('#leftDiv').toggleClass('hideListForRecipe');                		
+                		});
+                });
             });
          });
-      </script>
+</script>
 <title>JJRecipes list and search</title>
 </head>
 <body>
 	<jsp:include page="topPanel.jsp" flush="true"/>
 	<div id="bigBox">
 		<form action="searchRecipe" method="get">
-			 <input class="lefter" type="text" name="inputText">
-			 <input class="lefter" type="submit" value="Sök">
-			 <br/><br/>
+			<div class="searchCont">
+				<input class="lefter" type="text" name="inputText">
+				<input class="lefter" type="submit" value="Sök">
+			</div>
+
+			 
 			<div id="leftDiv" class="cont">
 				<ul>
 					<c:forEach var="item" items="${recipes}"> 

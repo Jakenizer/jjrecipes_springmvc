@@ -22,7 +22,8 @@ public class Ingredient extends BaseEntity{
 		LITRE("liter"),
 		GRAMS("gram"),
 		KILO("kg"),
-		NONE("-");
+		STYCKEN("st"),
+		NONE("");
 		
 		private String text;
 		
@@ -32,6 +33,17 @@ public class Ingredient extends BaseEntity{
 		
 		public String getText() {
 			return text;
+		}
+		
+		public static MeasureType fromString(String in) {
+			if (in != null) {
+				for (MeasureType mt : MeasureType.values()) {
+					if (mt.text.equalsIgnoreCase(in)) {
+						return mt;
+					}
+				}
+			} 
+			throw new IllegalArgumentException("null or faulty value");
 		}
 	}
 	

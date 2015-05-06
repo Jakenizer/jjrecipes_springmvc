@@ -13,7 +13,7 @@
 				</ul>
 			</li>
 			<li class="topMenuItem"><a href="tags"> Hantera taggar</a></li>
-			<li class="topMenuItem"><a href="" onclick="logout(); return false;"> Logga ut</a></li>
+			<li class="topMenuItem"><a href="javascript:void(0);" onclick="logout(); return false;"> Logga ut</a></li>
 		</ul>
 	</nav>
 </div>

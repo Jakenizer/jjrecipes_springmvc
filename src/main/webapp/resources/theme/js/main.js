@@ -10,3 +10,4 @@ function logout() {
 	document.logoutForm.submit();
 }
 
+
