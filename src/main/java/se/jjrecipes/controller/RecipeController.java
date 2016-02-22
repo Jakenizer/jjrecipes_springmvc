@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.imgscalr.Scalr;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -43,27 +48,38 @@ import se.jjrecipes.response.RecipeResponse;
  
 @Controller
 public class RecipeController {
+	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public ModelAndView login() {
+		ModelAndView mv = new ModelAndView("login");
+		return mv;
+	}
 
-//	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-//	public ModelAndView welcomePage() {
-// 
-//		ModelAndView model = new ModelAndView();
-//		model.addObject("title", "out");
-//		model.addObject("message", "This is outlog page!");
-//		model.setViewName("j_spring_security_logout");
-//		return model;
-// 
-//	}
+	@RequestMapping(value = "/loginfail", method = RequestMethod.GET)
+	public ModelAndView loginfailed() {
+		ModelAndView mv = new ModelAndView("login");
+		mv.addObject("error", "Fel användarnamn eller lösenord");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/home", method = RequestMethod.GET)
+	public ModelAndView home() {
+		ModelAndView mv = new ModelAndView("home");
+		return mv;
+	}
  
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public ModelAndView adminPage() {
- 
-		ModelAndView model = new ModelAndView();
-		model.addObject("title", "Spring Security Hello World");
-		model.addObject("message", "This is protected page!");
-		model.setViewName("admin/admin");
- 
-		return model;
+		ModelAndView mv = new ModelAndView("admin/admin");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+	    boolean isAdmin = authorities.contains(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")) ? true : false;
+	    if (!isAdmin)
+	    	mv.addObject("error", "Du saknar behörighet till denna sida");
+	    	
+		mv.addObject("title", "Spring Security Hello World");
+		mv.addObject("message", "This is protected page!"); 
+		return mv;
  
 	}
 

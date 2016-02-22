@@ -1,42 +1,24 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
-<head>
-<title>Login Form | www.beingjavaguys.com</title>
-</head>
+<head></head>
 <body>
-
-  
- 
- 
-
-  <h2>Login Here</h2>
-  
-
-  <div
-   style="text-align: center; padding: 30px; border: 1px solid green; width: 250px;">
-   <form method="post"
-    action="<c:url value='j_spring_security_check' />">
-
-    <table>
-     <tr>
-      <td colspan="2" style="color: red">${message}</td>
-
-     </tr>
-     <tr>
-      <td>User Name:</td>
-      <td><input type="text" name="username" /></td>
-     </tr>
-     <tr>
-      <td>Password:</td>
-      <td><input type="password" name="password" /></td>
-     </tr>
-     <tr>
-      <td> </td>
-      <td><input type="submit" value="Login" /></td>
-
-     </tr>
-    </table>
-   </form>
-  </div>
+   <h1>Login</h1>
+   <form name='f' action="login" method='POST'>
+      <table>
+         <tr>
+            <td>User:</td>
+            <td><input type='text' name='username' value=''></td>
+         </tr>
+         <tr>
+            <td>Password:</td>
+            <td><input type='password' name='password' /></td>
+         </tr>
+         <tr>
+            <td><input name="submit" type="submit" value="submit" /></td>
+         </tr>
+      </table>
+      <div style="color:red;">${error}</div>
+      <input type="hidden"  name="${_csrf.parameterName}"   value="${_csrf.token}"/>
+  </form>
 </body>
 </html>

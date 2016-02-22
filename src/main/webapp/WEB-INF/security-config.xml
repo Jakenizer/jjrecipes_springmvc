@@ -13,7 +13,16 @@
 		<intercept-url pattern="/tags" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/recipes" access="hasRole('ROLE_USER')" />		
 		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMINISTRATOR')"/>
-		 <logout logout-url="/logout" logout-success-url="/login" delete-cookies="JSESSIONID" />
+		<!--  <logout logout-url="/logout" logout-success-url="/login" delete-cookies="JSESSIONID" /> -->
+		 
+		 
+		         <!-- Override default login and logout pages -->
+        <form-login login-page="/login" 
+                             default-target-url="/home" 
+                             authentication-failure-url="/loginfail"
+                             always-use-default-target="true" />
+                             
+        <logout logout-url="/logout" logout-success-url="/login" />
 	</http>
  
 	<authentication-manager>
