@@ -1,7 +1,13 @@
 package se.jjrecipes.response;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.FileSystemResource;
 
 import se.jjrecipes.entity.Ingredient;
 import se.jjrecipes.entity.Recipe;
@@ -14,7 +20,7 @@ public class RecipeResponse {
 	private String content;
 	private Set<IngredientResponse> ingredients;
 	private Set<TagResponse> tags;
-	private byte[] image;
+	private String image;
 	
 	public RecipeResponse(Recipe r) {
 		this.id = r.getId();
@@ -28,7 +34,10 @@ public class RecipeResponse {
 		for (Tag tr : r.getTags()) {
 			tags.add(new TagResponse(tr));
 		}
-		this.image = r.getImage();
+		
+		byte[] im = r.getImage();
+		if (im != null)
+			this.image = Base64.encodeBase64String(im);
 	}
 	
 	public Long getId() {
@@ -63,10 +72,10 @@ public class RecipeResponse {
 	public void setTags(Set<TagResponse> tags) {
 		this.tags = tags;
 	}
-	public byte[] getImage() {
+	public String getImage() {
 		return image;
 	}
 	public void setImage(byte[] image) {
-		this.image = image;
+		this.image = Base64.encodeBase64String(image);
 	}
 }

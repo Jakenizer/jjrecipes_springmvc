@@ -2,8 +2,14 @@ package se.jjrecipes.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -11,43 +17,58 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 
+import org.apache.commons.io.IOUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.imgscalr.Scalr;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import se.jjrecipes.backing.RecipeBacking;
 import se.jjrecipes.data.RecipeData;
 import se.jjrecipes.data.TagData;
-import se.jjrecipes.data.UserData;
 import se.jjrecipes.entity.Ingredient;
 import se.jjrecipes.entity.Ingredient.MeasureType;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
-import se.jjrecipes.entity.User;
 import se.jjrecipes.exception.ImageException;
+import se.jjrecipes.form.RecipeForm;
 import se.jjrecipes.hibernate.HibernateUtil;
 import se.jjrecipes.response.RecipeResponse;
  
 @Controller
 public class RecipeController {
+	
+	@Autowired
+    private ServletContext servletContext;
+
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public ModelAndView start() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		ModelAndView mv;
+		Object o = auth.getPrincipal();
+		if (auth.getPrincipal() == "anonymousUser")
+			mv = new ModelAndView("login");
+		else
+			mv = new ModelAndView("home");
+		return mv;
+	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView login() {
@@ -100,10 +121,13 @@ public class RecipeController {
 	}
 	
 	@RequestMapping(value="/createRecipe", method=RequestMethod.POST)
-   public ModelAndView handleFileUpload(@RequestParam("name") String name, 
-    		@RequestParam(value = "ingredient", required = false) String[] ingredients, 
-    		@RequestParam("content") String content,
-            @RequestParam("fileUpload") MultipartFile file) {
+	public  ModelAndView create(@ModelAttribute RecipeForm form) {
+		
+		MultipartFile file = form.getFile();
+		String name = form.getName();
+		String content = form.getContent();
+		String[] ingredients = form.getIngredients();
+		List<String> tags = Arrays.asList(form.getTags());
 		
 		byte[] imageInBytes = null;
 		if (!file.isEmpty()) {
@@ -148,16 +172,26 @@ public class RecipeController {
 				ins.add(in);
 			}
         	recipe.setIngredients(ins);
+        	
+        	//create or get Tags and add
+        	Set<Tag> taggers = new HashSet<Tag>();
+        	for (String in : tags) {
+        		Tag aTag = TagData.getTag(Long.valueOf(in));
+        		if (aTag == null) {
+        			aTag = TagData.addTag(in);
+        		} 
+        		taggers.add(aTag);
+			}
+        	recipe.setTags(taggers);
+        	
             if (imageInBytes!= null && imageInBytes.length > 0) {
             	recipe.setImage(imageInBytes);
             }
-    		SessionFactory sf = HibernateUtil.getSessionFactory();
-    		Session ses = sf.openSession();
-    		ses.beginTransaction();
+            
+    		RecipeData.addRecipe(recipe);
     		
-    		Long id = (Long) ses.save(recipe);
-    		
-    		ses.getTransaction().commit();
+    		List<Recipe> recipes = RecipeData.listRecipes();
+    		mv.addObject("recipes", recipes);
     		
             mv.setViewName("list_and_search");
             return mv;
@@ -171,16 +205,20 @@ public class RecipeController {
     }
 	
 	@RequestMapping("/create_modify_recipe")
-	public ModelAndView recipe() {
+	public ModelAndView getCreateRecipe() {
+		TreeSet<Tag> tags = TagData.getSortedList();
+		
 		MeasureType[] types = Ingredient.MeasureType.values();
 		List<String> typeList = new ArrayList<String>();
 		for (MeasureType measureType : types) {
 			typeList.add(measureType.getText());
 		}
 		ModelAndView mv = new ModelAndView("create_modify_recipe");
+		mv.addObject("tags", tags);
 		mv.addObject("measuretypes", typeList);
 		return mv;
 	}
+
 	
 	@ExceptionHandler(ImageException.class)
 	public ModelAndView handleException(ImageException ex) {
@@ -193,33 +231,59 @@ public class RecipeController {
 		return model;
 	}
 	
-//	@RequestMapping("/tags") 
-//	public ModelAndView tags() {
-//		TreeSet<Tag> tags = TagData.getSortedList();
-//		ModelAndView mv = new ModelAndView("tags");
-//		mv.addObject("tags", tags);
-//		return mv;
-//	}
-	
-//	@RequestMapping("/nyTagg")
-//	public ModelAndView newTag(@RequestParam("newTag") String tagName) {
-//		SessionFactory sf = HibernateUtil.getSessionFactory();
-//		Session ses = sf.openSession();
-//		ses.beginTransaction();
-//		
-//		Tag tag = new Tag();
-//		tag.setName(tagName);
-//		ses.save(tag);
-//		
-//		ses.getTransaction().commit();
-//		ModelAndView mv = new ModelAndView("redirect:tags");
-//		return mv;
-//	}
+	@RequestMapping(value = "/recipe", method=RequestMethod.POST)
+	public ModelAndView getRecipe(@RequestParam("id") String id){
+		ModelAndView mv = new ModelAndView("view_recipe");
+		
+		Recipe recipe = RecipeData.findRecipe(Long.valueOf(id));
+		
+		//TODO: hantera alla fel. nullpointers och filinläsningsfel
+		RecipeResponse resp = new RecipeResponse(recipe);
+		if (resp.getImage() == null) {
+			URL resource = RecipeController.class.getClassLoader().getResource("image/recipe-default.jpg");
+			InputStream inStream;
+			try {
+				inStream = resource.openStream();
+				byte[] byteArray = IOUtils.toByteArray(inStream);
+				resp.setImage(byteArray);
+			} catch (IOException e) {
+				mv.addObject("message", "Fel vid hämtning av defaultbild till recept");
+				mv.addObject("exception", e.getMessage());
+				mv.addObject("returnpage", "/JJRecipes/list_and_search");
+				mv.setViewName("error");
+				return mv;
+			} 
+		}
+		mv.addObject("responseData", resp);
+		return mv;
+	}
 	
 	@RequestMapping(value = "/loadRecipe", method=RequestMethod.POST)
-	public 	@ResponseBody RecipeResponse testa(@RequestParam("redId") String recid){
-		Recipe recipe = RecipeData.findRecipe(Long.valueOf(recid));
+	public @ResponseBody RecipeResponse loadRecipe(@RequestParam("redId") String recid){
+		
+		
+		Recipe recipe = RecipeData.findRecipe(Long.valueOf(recid));		
 		RecipeResponse resp = new RecipeResponse(recipe);
+		if (resp.getImage() != null)
+			return resp;
+		
+		URL resource = RecipeController.class.getClassLoader().getResource("image/recipe-default.jpg");
+        
+        
+		InputStream inStream;
+		try {
+			 inStream = resource.openStream();
+			//inStream = new FileInputStream(resource);
+			byte[] byteArray = IOUtils.toByteArray(inStream);
+			resp.setImage(byteArray);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 		//TODO: skapa eget json object och sätt värden från olika saker?
 		return resp;
 		//return new ModelAndView("NewFile");

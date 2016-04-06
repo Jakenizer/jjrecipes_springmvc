@@ -10,6 +10,7 @@
 		<intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
 		<intercept-url pattern="/createRecipe" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/create_modify_recipe" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/list_and_search" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/tags" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/recipes" access="hasRole('ROLE_USER')" />		
 		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMINISTRATOR')"/>
@@ -18,7 +19,7 @@
 		 
 		         <!-- Override default login and logout pages -->
         <form-login login-page="/login" 
-                             default-target-url="/home" 
+                             default-target-url="/tags" 
                              authentication-failure-url="/loginfail"
                              always-use-default-target="true" />
                              

@@ -1,7 +1,13 @@
 package se.jjrecipes.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -9,7 +15,13 @@ import javax.persistence.Table;
 public class Tag extends BaseEntity implements Comparable<Tag> {
 	
 	private String name;
-	//private Set<Recipe> recipes;
+	private Set<Recipe> recipes;
+	
+	public Tag(String name) {
+		this.name = name;
+	}
+	
+	public Tag() {}
 
 	@Column(name="name", unique=true)
 	public String getName() {
@@ -19,8 +31,12 @@ public class Tag extends BaseEntity implements Comparable<Tag> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	/*
-	@OneToMany(mappedBy = "tags")
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "tag_recipe", joinColumns = { 
+			@JoinColumn(name = "tag_id", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "recipe_id", 
+					nullable = false, updatable = false) })
 	public Set<Recipe> getRecipes() {
 		return recipes;
 	}
@@ -28,7 +44,7 @@ public class Tag extends BaseEntity implements Comparable<Tag> {
 	public void setRecipes(Set<Recipe> recipes) {
 		this.recipes = recipes;
 	}
-*/
+
 	@Override
 	public int compareTo(Tag otherTag) {
 		return name.compareToIgnoreCase(otherTag.getName());

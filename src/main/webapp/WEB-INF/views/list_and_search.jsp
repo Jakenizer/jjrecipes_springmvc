@@ -3,52 +3,40 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!-- 
-	<meta name="_csrf" content="${_csrf.token}"/>
-	<!-- default header name is X-CSRF-TOKEN
-	<meta name="_csrf_header" content="${_csrf.headerName}"/>
-	 -->
 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="_csrf" content="${_csrf.token}"/>
+<!-- default header name is X-CSRF-TOKEN-->
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
 <link href="<c:url value="/resources/css/list_and_search.css" />" rel="stylesheet">
 
 <script src="<c:url value="/resources/js/main.js" />"></script>
 
-<script src="<c:url value="/resources/js/jquery-1.11.2.js" />"></script>
-<script src="<c:url value="/resources/js/jquery-ui-1.11.4/jquery-ui.min.js" />"></script>
 <script type="text/javascript">
          $(document).ready(function() {
-            $('.listAnchor').click(function(event){
-               var token = $("meta[name='_csrf']").attr("content");
-					var header = $("meta[name='_csrf_header']").attr("content");
-            	var id = event.target.id;
-               
-               var headers = {};
-   				headers[header] = token;
-					
-                $.ajax({
-                    type : 'POST',
-                    url : '/JJRecipes/loadRecipe',
-                    data: {redId : id},
-                    headers: headers,
-                    crossDomain : true,
-                }).done(function( data ) {
-                		$('#rightDiv').html("");
-                		$('#rightDiv').append("<h2>" + data.name + "</h2>");
-                		$('#rightDiv').append("<img id='recipeImage' src='data:image/png;base64," + data.image + "'/>");
-                		$('#rightDiv').append("<button type='button' id='expandBtn'>expandera</button>");
-                		$('#rightDiv').on('click', '#expandBtn', function(){
-                			$('#rightDiv').toggleClass('expandedRecipe');
-                		   $('#leftDiv').toggleClass('hideListForRecipe');                		
-                		});
-                });
-            });
+        	 $('.listAnchor').click(function(event){
+					$("#idVal").val(event.target.id);
+            	$("#submitRec").submit();
+        	 });
          });
 </script>
 <title>JJRecipes list and search</title>
 </head>
 <body>
+<div class="container">
+
 	<jsp:include page="topPanel.jsp" flush="true"/>
 	<div id="bigBox">
 		<form action="searchRecipe" method="get">
@@ -65,14 +53,15 @@
 	 			   </c:forEach>
 				</ul>
 			</div>
-			<div id="rightDiv" class="cont">
-			</div>
+
 		</form>
-		
+			<jsp:include page="bottomPanel.jsp" flush="true"/>
+		<form name="submitRecipe" action="recipe" method="post" id="submitRec">
+			<input type="hidden" name="id" id="idVal">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		</form>
 	</div>
+</div>
 	
-	
-	
-	<jsp:include page="bottomPanel.jsp" flush="true"/>
 </body>
 </html>

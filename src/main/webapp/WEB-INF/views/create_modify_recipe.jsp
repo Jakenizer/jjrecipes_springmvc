@@ -1,16 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="_csrf" content="${_csrf.token}"/>
+<!-- default header name is X-CSRF-TOKEN-->
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
 <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
+
 <link href="<c:url value="/resources/css/create_modify_recipe.css" />" rel="stylesheet">
-
-<script src="<c:url value="/resources/js/main.js" />"></script>
-
-<script src="<c:url value="/resources/js/jquery-1.11.2.js" />"></script>
-<script src="<c:url value="/resources/js/jquery-ui-1.11.4/jquery-ui.min.js" />"></script>
 
 
 <title>JJRecipes create modify recipe</title>
@@ -31,12 +40,20 @@ $(document).ready(function(){
        }
     	 //var numItems =  $("#ingredientList li").length;
     	 
-       $('#ingredientList').append('<li><input type="checkbox" name="ingredient" value="' + val + '" checked>' + text + '</li>');
+       $('#ingredientList').append('<li><input type="checkbox" name="ingredients" value="' + val + '" checked>' + text + '</li>');
     });
+    
+    $('#selectTagBtn').click(function() {
+    	var text = $('#selectTag option:selected').html();
+    	var val = $('#selectTag').val();
+    	$('#selectedTags').append('<li><input type="checkbox" name="tags" value="' + val + '" checked>' + text + '</li>');
+    })
 });
 </script>
 </head>
 <body>
+<div class="container">
+
 	<jsp:include page="topPanel.jsp" flush="true"/>
 	
 	<c:if test="${empty recipe.id}">
@@ -63,7 +80,21 @@ $(document).ready(function(){
 			<div>
 				<ul id="ingredientList"></ul>
 		  </div>
-		  <input type="file" name="fileUpload" size="50"><br><br>
+		  
+		  <select id="selectTag">
+		  		<c:forEach var="tag" items="${tags}"> 
+  			      	<option value="${tag.id}">${tag.name}</option>
+ 			   </c:forEach>
+		  </select>
+		  <button type='button' id="selectTagBtn">Lägg till</button><br>
+		 
+		  <div>
+		  		<ul id="selectedTags"></ul>
+		  		
+		  </div>
+		  
+		  <br>
+		  <input type="file" name="file" size="50"><br><br>
 		  <input type="submit" value="Spara">
 		<!--<sec:csrfMetaTags /> -->
 		 <input type="hidden"
@@ -71,7 +102,7 @@ $(document).ready(function(){
 			value="${_csrf.token}"/>
 		</form>
 	</div>
-
+</div>
 	<jsp:include page="bottomPanel.jsp" flush="true"/>
 </body>
 </html>
