@@ -1,13 +1,9 @@
 package se.jjrecipes.response;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.FileSystemResource;
 
 import se.jjrecipes.entity.Ingredient;
 import se.jjrecipes.entity.Recipe;
@@ -42,10 +38,6 @@ public class RecipeResponse {
 	
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {

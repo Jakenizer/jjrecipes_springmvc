@@ -82,4 +82,16 @@ public class Ingredient extends BaseEntity{
 	public void setRecipe(Recipe recipe) {
 		this.recipe = recipe;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Ingredient))
+			return false;
+		
+		Ingredient i = (Ingredient) obj;
+		if (i.getId() == id)
+			return true;
+		
+		return false;
+	}
 }

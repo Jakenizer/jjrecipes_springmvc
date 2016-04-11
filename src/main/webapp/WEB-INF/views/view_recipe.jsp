@@ -18,6 +18,8 @@
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
+<link href="<c:url value="/resources/css/view_recipe.css" />" rel="stylesheet">
+
 
 <title>JJRecipes</title>
 </head>
@@ -25,8 +27,29 @@
 	<div class="container">
 		<jsp:include page="topPanel.jsp" flush="true"/>
 		<div class="bigBox">
-		
-		<div id=imageCont><img id='recipeImage' src='data:image/jpg;base64,${responseData.image }'/></div>
+			<div id="headerDiv">
+				<h1>${responseData.name}</h1>
+				<form action="modify_recipe">				
+					<input type="hidden" name="recipeID" value="${responseData.id}">
+					<input type="image" src="resources/image/edit-icon.png">
+				</form>
+			</div>
+    		<div class="col-lg-7">
+      		<div>${responseData.content}</div>
+    		</div>
+    		<div class="col-lg-5">
+      		<div id=imageCont><img id='recipeImage' src='data:image/jpg;base64,${responseData.image}'/></div>
+      		<div id="tagsCont">
+      		<c:if test="${not empty responseData.tags}">
+      			<ul>
+      			<c:forEach items="${responseData.tags}" var="tag">
+      				<li>${tag.name}</li>
+      			</c:forEach>
+      			</ul>		
+      		</c:if>
+      		</div>
+    		</div>
+  		
 		
 		 <input type="hidden"
 			name="${_csrf.parameterName}"

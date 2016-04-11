@@ -8,9 +8,11 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import se.jjrecipes.entity.Recipe;
@@ -19,15 +21,22 @@ import se.jjrecipes.hibernate.HibernateUtil;
 
 public class RecipeData {
 	
-	public static Recipe addRecipe(Recipe r) {
-		SessionFactory sf = HibernateUtil.getSessionFactory();
-		Session ses = sf.openSession();
-		ses.beginTransaction();
-		
-		Long id = (Long) ses.save(r);
-		ses.getTransaction().commit();
-		Recipe newRecipe = (Recipe) ses.get(Recipe.class, id);
-		ses.close();
+	public static Recipe addRecipe(Recipe r) throws HibernateException {
+		Session ses = null;
+		Recipe newRecipe;
+		try {
+			SessionFactory sf = HibernateUtil.getSessionFactory();
+			ses = sf.openSession();
+			ses.beginTransaction();
+
+			Long id = (Long) ses.save(r);
+			ses.getTransaction().commit();
+			newRecipe = (Recipe) ses.get(Recipe.class, id);
+		} catch (HibernateException e) {
+			throw e;
+		} finally {
+			if (ses != null) ses.close();
+		}
 		return newRecipe;
 	}
 	
@@ -89,6 +98,20 @@ public class RecipeData {
 		List<Recipe> recipes = q.list();
 		session.close();
 		return recipes;
+	}
+	
+	public static Recipe updateRecipe(Recipe r) {
+		
+		Session session = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			Recipe merged = (Recipe) session.merge(r);
+			transaction.commit();
+			return merged;
+		} finally {
+			if (session != null) session.close();
+		}
 	}
 	
 	public static void deleteRecipe(Recipe r) {

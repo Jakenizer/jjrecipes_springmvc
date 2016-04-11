@@ -13,6 +13,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+
 @Entity
 @Table(name="recipe")
 public class Recipe extends BaseEntity {
@@ -41,7 +43,8 @@ public class Recipe extends BaseEntity {
 		this.content = content;
 	}
 	
-	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "recipe", cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+	//@Cascade(value = {org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.DELETE})
 	public Set<Ingredient> getIngredients() {
 		return ingredients;
 	}
@@ -61,11 +64,11 @@ public class Recipe extends BaseEntity {
 	
 //	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "recipes")
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(name = "tag_recipe", joinColumns = { 
-			@JoinColumn(name = "recipe_id", nullable = false, updatable = false) }, 
+			@JoinColumn(name = "recipe_id", nullable = false, updatable = true) }, 
 			inverseJoinColumns = { @JoinColumn(name = "tag_id", 
-					nullable = false, updatable = false) })
+					nullable = false, updatable = true) })
 	public Set<Tag> getTags() {
 		return tags;
 	}

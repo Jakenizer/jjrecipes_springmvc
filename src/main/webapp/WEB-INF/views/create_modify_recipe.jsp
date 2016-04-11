@@ -55,16 +55,12 @@ $(document).ready(function(){
 <div class="container">
 
 	<jsp:include page="topPanel.jsp" flush="true"/>
-	
-	<c:if test="${empty recipe.id}">
-	</c:if>
 
 
 	<div id="bigBox">
-	<!-- ?${_csrf.parameterName}=${_csrf.token} -->
 		<form action="createRecipe" method="post" enctype="multipart/form-data">
-			Namn:<br><input name="name" required="required" maxlength="100" value="${recipe.name}"/><br><br>
-			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1000"></textarea><br><br>
+			Namn:<br><input name="name" required="required" maxlength="100" value="${recipeData.name}"/><br><br>
+			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1000">${recipeData.content}</textarea><br><br>
 			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>
 			<div class="ingredientGroup" style="width:180px">Mängd:<br><input type="number" name="amount" value="0" step="1" min="0" id="amount"></div>
 			<div class="ingredientGroup">Mått:<br>
@@ -75,10 +71,14 @@ $(document).ready(function(){
 			</select>
 			</div>
 			<br>
-			
+			bajs;;0;;tsk
 			<button type='button' id="addIngredient">Lägg till</button><br>
 			<div>
-				<ul id="ingredientList"></ul>
+				<ul id="ingredientList">
+					<c:forEach items="${recipeData.ingredients}" var="ingredient">
+						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.name }</li>
+					</c:forEach>
+				</ul>
 		  </div>
 		  
 		  <select id="selectTag">
@@ -89,13 +89,22 @@ $(document).ready(function(){
 		  <button type='button' id="selectTagBtn">Lägg till</button><br>
 		 
 		  <div>
-		  		<ul id="selectedTags"></ul>
+		  		<ul id="selectedTags">
+		  			<c:forEach items="${recipeData.tags}" var="tag">
+						<li><input type="checkbox" name="tags" value="${tag.id}" checked>${tag.name}</li>
+					</c:forEach>
+		  		</ul>
 		  		
 		  </div>
 		  
 		  <br>
 		  <input type="file" name="file" size="50"><br><br>
 		  <input type="submit" value="Spara">
+		  
+		  <c:if test="${not empty recipeData}">
+			  	<input type="hidden" name="id" value="${recipeData.id}">
+		  </c:if>
+	  	  
 		<!--<sec:csrfMetaTags /> -->
 		 <input type="hidden"
 			name="${_csrf.parameterName}"

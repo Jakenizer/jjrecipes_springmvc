@@ -38,8 +38,8 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-      	<li><a href="/JJRecipes/list_and_search">Recept</a></li>
-      	
+      	<li><a href="/JJRecipes/list_and_search">Lista recept</a></li>
+      	<li><a href="/JJRecipes/create_recipe">Skapa nytt recept</a></li>
         <li class="active"><a href="/JJRecipes/tags">Taggar</a></li>
         <li><a href="javascript:logout();">Logga ut</a></li>
         <!-- <li class="dropdown">
