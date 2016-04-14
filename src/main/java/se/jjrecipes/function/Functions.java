@@ -16,7 +16,7 @@ public class Functions {
 	public static Function<Long, Tag> idsToTags = new Function<Long, Tag>() {
 		@Override
 		public Tag apply(Long id) {
-			return TagData.getTag(id);
+			return TagData.get(Tag.class, id);
 		}
 	};
 	

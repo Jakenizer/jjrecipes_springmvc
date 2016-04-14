@@ -1,11 +1,6 @@
 package se.jjrecipes.form;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.web.multipart.MultipartFile;
-
-import se.jjrecipes.entity.Ingredient.MeasureType;
 
 public class RecipeForm {
 	private Long id;

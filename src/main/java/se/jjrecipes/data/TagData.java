@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.persistence.CacheStoreMode;
+
+import org.hibernate.CacheMode;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -41,20 +45,19 @@ public class TagData extends AbstractData {
 	
 	@SuppressWarnings("unchecked")
 	public static List<Tag> getTagsByNames(List<String> names) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-	    return (List<Tag>) session.createCriteria(Tag.class).add(Restrictions.in("name", names)).list();
+		Session session = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			return session.createCriteria(Tag.class)
+					.add(Restrictions.in("name", names))
+					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+		} finally {
+			if (session != null) session.close();
+		}
 	}
 	
 	public static TreeSet<Tag> getSortedList() {
 		return new TreeSet<Tag>(listTags());
-	}
-	
-	public static Tag getTag(long id) {
-		SessionFactory sf = HibernateUtil.getSessionFactory();
-		Session ses = sf.openSession();
-		ses.beginTransaction();
-		Tag tag = (Tag)ses.get(Tag.class, id);
-		return tag;
 	}
 	
 	public static Tag getTagByName(String name) {

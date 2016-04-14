@@ -13,8 +13,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
-
 @Entity
 @Table(name="recipe")
 public class Recipe extends BaseEntity {
@@ -57,13 +55,8 @@ public class Recipe extends BaseEntity {
 //	public Set<User> getUsersThatFav() {
 //		return usersThatFav;
 //	}
-//	
-//	public void setUsersThatFav(Set<User> usersThatFav) {
-//		this.usersThatFav = usersThatFav;
-//	}
-	
-//	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "recipes")
-	
+
+		
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(name = "tag_recipe", joinColumns = { 
 			@JoinColumn(name = "recipe_id", nullable = false, updatable = true) }, 

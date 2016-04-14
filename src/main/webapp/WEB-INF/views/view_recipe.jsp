@@ -35,18 +35,34 @@
 				</form>
 			</div>
     		<div class="col-lg-7">
-      		<div>${responseData.content}</div>
+    			<div class="row">
+      			<div class="col-lg-12" id="contentCont">${responseData.content}</div>
+      		</div>
+      		<div class="row">
+	      		<div id="tagsCont" class="col-lg-12">
+		      		<h2>Taggar</h2>
+		      		<c:if test="${not empty responseData.tags}">
+		      			<ul class="list-group">
+		      			<c:forEach items="${responseData.tags}" var="tag">
+		      				<li class="list-group-item">${tag.name}</li>
+		      			</c:forEach>
+		      			</ul>		
+		      		</c:if>
+	      		</div>
+      		</div>
+      		
     		</div>
     		<div class="col-lg-5">
       		<div id=imageCont><img id='recipeImage' src='data:image/jpg;base64,${responseData.image}'/></div>
-      		<div id="tagsCont">
-      		<c:if test="${not empty responseData.tags}">
-      			<ul>
-      			<c:forEach items="${responseData.tags}" var="tag">
-      				<li>${tag.name}</li>
-      			</c:forEach>
-      			</ul>		
-      		</c:if>
+      		<div id="ingredientCont">
+      			<h2>Ingredienser</h2>
+      			<c:if test="${not empty responseData.tags}">
+	      			<ul>
+	      			<c:forEach items="${responseData.ingredients}" var="ing">
+	      				<li>${ing.name}</li>
+	      			</c:forEach>
+	      			</ul>		
+      			</c:if>
       		</div>
     		</div>
   		

@@ -1,7 +1,5 @@
 package se.jjrecipes.response;
 
-import java.util.Map;
-
 import se.jjrecipes.entity.Ingredient;
 import se.jjrecipes.entity.Ingredient.MeasureType;
 

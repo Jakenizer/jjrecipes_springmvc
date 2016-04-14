@@ -32,7 +32,7 @@
 	
 		<form action="nyTagg">
 		Skapa ny tag:<br>
-		<input name="newTag" style="width:250px"> <input type="submit" value="Skapa tag">
+		<input name="newTag" style="width:250px"> <input type="submit" value="Skapa tag"><span>${error}</span>
 	</form>
 			<form action="searchTag" method="get" name="tagForm">
 				Välj de taggar du vill söka med<br>
@@ -71,7 +71,10 @@
 		});
 	</script>
 
-
+	<form action="removeTag" id="removeTag" method="post">
+		<input type="hidden" name="tagId" id="tagId" >
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	</form>
 	<jsp:include page="bottomPanel.jsp" flush="true"/>
 </div></div>
 	

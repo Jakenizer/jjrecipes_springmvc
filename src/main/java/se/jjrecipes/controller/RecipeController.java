@@ -62,7 +62,6 @@ public class RecipeController {
 	public ModelAndView start() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		ModelAndView mv;
-		Object o = auth.getPrincipal();
 		if (auth.getPrincipal() == "anonymousUser")
 			mv = new ModelAndView("login");
 		else
@@ -145,7 +144,7 @@ public class RecipeController {
 	@RequestMapping(value="/modify_recipe", method=RequestMethod.GET)
 	public  ModelAndView getModify(@RequestParam(value = "recipeID", required = true) long id) {
 		ModelAndView mv = new ModelAndView("create_modify_recipe");
-		Recipe recipe = RecipeData.findRecipe(id);
+		Recipe recipe = RecipeData.get(Recipe.class, id);
 		RecipeResponse recipeData = new RecipeResponse(recipe);
 		mv.addObject("recipeData", recipeData);
 		
@@ -202,7 +201,7 @@ public class RecipeController {
 	public ModelAndView getRecipe(@RequestParam("id") String id){
 		ModelAndView mv = new ModelAndView("view_recipe");
 		
-		Recipe recipe = RecipeData.findRecipe(Long.valueOf(id));
+		Recipe recipe = RecipeData.get(Recipe.class, Long.valueOf(id));
 		
 		//TODO: hantera alla fel. nullpointers och filinläsningsfel
 		RecipeResponse resp = new RecipeResponse(recipe);
@@ -229,7 +228,7 @@ public class RecipeController {
 	public @ResponseBody RecipeResponse loadRecipe(@RequestParam("redId") String recid){
 		
 		
-		Recipe recipe = RecipeData.findRecipe(Long.valueOf(recid));		
+		Recipe recipe = RecipeData.get(Recipe.class, Long.valueOf(recid));		
 		RecipeResponse resp = new RecipeResponse(recipe);
 		if (resp.getImage() != null)
 			return resp;
@@ -308,7 +307,7 @@ public class RecipeController {
 		//create or get Tags and add
 		Set<Tag> taggers = new HashSet<Tag>();
 		for (String in : tags) {
-			Tag aTag = TagData.getTag(Long.valueOf(in));
+			Tag aTag = TagData.get(Tag.class, Long.valueOf(in));
 			if (aTag == null) {
 				aTag = TagData.addTag(in);
 			} 
@@ -324,10 +323,11 @@ public class RecipeController {
 	}
 	
 	private Recipe updateRecipe(RecipeForm form) {
-		Recipe recipe = RecipeData.getRecipe(form.getId());
+		Recipe recipe = RecipeData.get(Recipe.class, form.getId());
 		recipe.setName(form.getName());
 		recipe.setContent(form.getContent());
 		recipe.setImage(recipe.getImage());
+		
 		//compare the collections tags and ingredients
 		List<String> newTagsIn = Arrays.asList(form.getTags());
 		Iterable<Long> longs = Iterables.transform(newTagsIn, Functions.stringsToLongs);
@@ -342,7 +342,7 @@ public class RecipeController {
 			
 			String[] ingParts = inins[i].split(";;");
 			if (ingParts.length == 1 && NumberUtils.isNumber(ingParts[0])) {
-				in = IngredientData.get(Long.valueOf(ingParts[0]));
+				in = IngredientData.get(Ingredient.class, Long.valueOf(ingParts[0]));
 				staying.add(in);
 			} else if (ingParts.length == 3){
 				in.setName(ingParts[0]);
@@ -352,15 +352,15 @@ public class RecipeController {
 			in.setRecipe(recipe);
 			ins.add(in);
 		}
-		orphanRemovedIngredients(recipe.getIngredients(), staying);
+		removeOrphanedIngredients(recipe.getIngredients(), staying);
 		recipe.setIngredients(ins);
-		Recipe recipe2 = RecipeData.updateRecipe(recipe);
-		return recipe2;
+		Recipe updatedRecipe = RecipeData.updateRecipe(recipe);
+		return updatedRecipe;
 	}
 	
-	private void orphanRemovedIngredients(Set<Ingredient> existing, Set<Ingredient> newState) {
+	private void removeOrphanedIngredients(Set<Ingredient> existing, Set<Ingredient> newSet) {
 		for (Ingredient ingredient : existing) {
-			if (!newState.contains(ingredient)) {
+			if (!newSet.contains(ingredient)) {
 				ingredient.setRecipe(null);
 				IngredientData.deleteById(Ingredient.class, ingredient.getId());
 			}

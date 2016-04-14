@@ -1,25 +1,19 @@
 package se.jjrecipes.data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 
 import se.jjrecipes.entity.Recipe;
-import se.jjrecipes.entity.User;
 import se.jjrecipes.hibernate.HibernateUtil;
 
-public class RecipeData {
+public class RecipeData extends AbstractData{
 	
 	public static Recipe addRecipe(Recipe r) throws HibernateException {
 		Session ses = null;
@@ -38,22 +32,6 @@ public class RecipeData {
 			if (ses != null) ses.close();
 		}
 		return newRecipe;
-	}
-	
-	public static Recipe getRecipe(Long id) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Recipe recipe = (Recipe) session.get(Recipe.class, id);
-		session.close();
-		return recipe;
-	}
-	
-	public static Recipe findRecipe(Long id) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Query query = session.createQuery("FROM Recipe re where re.id=:recipe_id");
-		query.setParameter("recipe_id", id);
-		Recipe recipe = (Recipe) query.uniqueResult();
-		session.close();
-		return recipe;
 	}
 	
 	@SuppressWarnings("unchecked")

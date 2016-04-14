@@ -5,16 +5,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import se.jjrecipes.data.RecipeData;
 import se.jjrecipes.data.TagData;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
+import se.jjrecipes.form.TagForm;
 import se.jjrecipes.function.Functions;
 
 import com.google.common.collect.Iterables;
@@ -32,9 +38,15 @@ public class TagController {
 	}
 
 	@RequestMapping("/nyTagg")
-	public ModelAndView newTag(@RequestParam("newTag") String tagName) {
-		TagData.addTag(tagName);
-		ModelAndView mv = new ModelAndView("tags");
+	public ModelAndView newTag(@Valid TagForm form, BindingResult result, RedirectAttributes redirectAttrs) {
+		ModelAndView mv = new ModelAndView("redirect:tags");
+		if(result.hasErrors()) {
+			FieldError fieldError = result.getFieldError();
+			redirectAttrs.addFlashAttribute("error", fieldError.getDefaultMessage());
+		} else {
+			TagData.addTag(form.getNewTag());
+		}
+
 		return mv;
 	}
 	
@@ -52,7 +64,7 @@ public class TagController {
 	@RequestMapping(value="/removeTag", method = RequestMethod.POST)
 	public ModelAndView removeTag(@RequestParam("tagId") long id) {
 		TagData.deleteById(Tag.class, id);
-		
+	
 		return new ModelAndView("redirect:tags");
 	}
 }

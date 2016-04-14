@@ -5,3 +5,12 @@ h1 > form {
 div#headerDiv > * {
     display: inline-table;
 }
+
+div#tagsCont ul, div#ingredientCont ul {
+width: 400px;
+
+}
+
+div#imageCont, div#contentCont {
+	height: 350px;
+}

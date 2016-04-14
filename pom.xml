@@ -11,6 +11,7 @@
 	<properties>
 		<spring.version>4.1.5.RELEASE</spring.version>
 		<hibernate.version>4.3.8.Final</hibernate.version>
+		<hibernate.validator.version>5.2.4.Final</hibernate.validator.version>
 		<spring.security.version>4.0.1.RELEASE</spring.security.version>
 	</properties>
 	
@@ -111,6 +112,13 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
+        
+        <dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
+		</dependency>
+        
         
 		<dependency>
 			<groupId>mysql</groupId>

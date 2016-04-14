@@ -76,7 +76,7 @@ $(document).ready(function(){
 			<div>
 				<ul id="ingredientList">
 					<c:forEach items="${recipeData.ingredients}" var="ingredient">
-						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.name }</li>
+						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.name} ${ingredient.amount} ${ingredient.measureType}</li>
 					</c:forEach>
 				</ul>
 		  </div>
