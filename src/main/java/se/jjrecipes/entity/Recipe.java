@@ -41,8 +41,7 @@ public class Recipe extends BaseEntity {
 		this.content = content;
 	}
 	
-	@OneToMany(mappedBy = "recipe", cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
-	//@Cascade(value = {org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.DELETE})
+	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Set<Ingredient> getIngredients() {
 		return ingredients;
 	}

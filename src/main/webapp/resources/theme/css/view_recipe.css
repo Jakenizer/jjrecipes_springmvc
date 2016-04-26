@@ -14,3 +14,11 @@ width: 400px;
 div#imageCont, div#contentCont {
 	height: 350px;
 }
+
+div#recipeEditBtn {
+	height: 32px;
+	width: 32px;
+	background-image: url("resources/image/edit-icon.png");
+	background-repeat	: no-repeat;
+	border: 0;
+}

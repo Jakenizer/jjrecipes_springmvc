@@ -13,3 +13,7 @@ h1 {
 	padding-left: 15px
 }
 
+.fieldError {
+	font-weight: bold;
+	color: red;
+}

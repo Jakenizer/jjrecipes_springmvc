@@ -39,12 +39,13 @@
 
 	<jsp:include page="topPanel.jsp" flush="true"/>
 	<div id="bigBox">
-		<form action="searchRecipe" method="get">
+		<form action="searchRecipe" method="post">
 			<div class="searchCont">
 				<input class="lefter" type="text" name="inputText">
 				<input class="lefter" type="submit" value="Sök">
 			</div>
-
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		</form>
 			 
 			<div id="leftDiv" class="cont">
 				<ul>
@@ -54,7 +55,6 @@
 				</ul>
 			</div>
 
-		</form>
 			<jsp:include page="bottomPanel.jsp" flush="true"/>
 		<form name="submitRecipe" action="recipe" method="post" id="submitRec">
 			<input type="hidden" name="id" id="idVal">

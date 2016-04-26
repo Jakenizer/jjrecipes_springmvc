@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -28,19 +29,24 @@ $(document).ready(function(){
     $('#addIngredient').click(function() {		
        var name = $('#newIngredient').val();
        var amount = $('#amount').val();
-       var type = $('#selectMeasureType').val();
+       var type = $('#selectMeasureType option:selected').text();
+       var typeId = $('#selectMeasureType').val();
+       var json = {};
+       json['name'] = name;
        var text = name; 
        var val = name;
        if (amount) {
+    	   json['amount'] = amount;
     	   text += " " + amount;
     	   val += ";;" + amount;
     	   if (type)
+    		   json['measureType'] = typeId;
     		   text += " " + type;
-    	   	val += ";;" + type;
+    	   	val += ";;" + typeId;
        }
     	 //var numItems =  $("#ingredientList li").length;
     	 
-       $('#ingredientList').append('<li><input type="checkbox" name="ingredients" value="' + val + '" checked>' + text + '</li>');
+       $('#ingredientList').append('<li><input type="checkbox" name="ingredients" value=' + JSON.stringify(json) + ' checked>' + text + '</li>');
     });
     
     $('#selectTagBtn').click(function() {
@@ -59,19 +65,18 @@ $(document).ready(function(){
 
 	<div id="bigBox">
 		<form action="createRecipe" method="post" enctype="multipart/form-data">
-			Namn:<br><input name="name" required="required" maxlength="100" value="${recipeData.name}"/><br><br>
-			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1000">${recipeData.content}</textarea><br><br>
+			Namn:<br><input name="name" required="required" maxlength="50" value="${recipeData.name}"/><span class="fieldError">${name_error }</span><br><br>
+			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1001">${recipeData.content}</textarea><br><span class="fieldError">${content_error }</span><br><br>
 			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>
 			<div class="ingredientGroup" style="width:180px">Mängd:<br><input type="number" name="amount" value="0" step="1" min="0" id="amount"></div>
 			<div class="ingredientGroup">Mått:<br>
 			<select id="selectMeasureType" name="selectMeasureType">
  			   <c:forEach var="item" items="${measuretypes}"> 
-  			      <option value="${item}">${item}</option>
+  			      <option value="${item.id}">${item.name}</option>
  			   </c:forEach>
 			</select>
 			</div>
 			<br>
-			bajs;;0;;tsk
 			<button type='button' id="addIngredient">Lägg till</button><br>
 			<div>
 				<ul id="ingredientList">
@@ -80,6 +85,7 @@ $(document).ready(function(){
 					</c:forEach>
 				</ul>
 		  </div>
+		  <span class="fieldError">${ingredient_error }</span>
 		  
 		  <select id="selectTag">
 		  		<c:forEach var="tag" items="${tags}"> 

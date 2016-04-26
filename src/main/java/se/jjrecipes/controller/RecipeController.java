@@ -16,6 +16,7 @@ import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
+import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -27,6 +28,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,12 +39,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import se.jjrecipes.data.IngredientData;
+import se.jjrecipes.data.MeasuretypeData;
 import se.jjrecipes.data.RecipeData;
 import se.jjrecipes.data.TagData;
 import se.jjrecipes.entity.Ingredient;
-import se.jjrecipes.entity.Ingredient.MeasureType;
+//import se.jjrecipes.entity.Ingredient.MeasureType;
+import se.jjrecipes.entity.Measuretype;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
 import se.jjrecipes.exception.ImageException;
@@ -56,6 +63,24 @@ public class RecipeController {
 	
 	@Autowired
     private ServletContext servletContext;
+	
+	@RequestMapping(value = "/initMeasuretypes", method = RequestMethod.GET)
+	public String initMeasuretypes(Model model) {
+		//MeasuretypeData.add("gram", "g");
+//		MeasuretypeData.add("milligram", "mg");
+//		MeasuretypeData.add("kilo", "kg");
+//		MeasuretypeData.add("milliliter", "ml");
+//		MeasuretypeData.add("centiliter", "cl");
+//		MeasuretypeData.add("deciliter", "dl");
+//		MeasuretypeData.add("liter", "l");
+//		MeasuretypeData.add("kryddmått", "krm");
+//		MeasuretypeData.add("tesked", "tsk");
+//		MeasuretypeData.add("matsked", "msk");
+//		MeasuretypeData.add("stycken", "st");
+		
+		model.addAttribute("ok", "ok");
+		return "init_measuretypes";
+	}
 
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -112,16 +137,27 @@ public class RecipeController {
 	}
 	
 	
-	@RequestMapping(value = "/searchRecipe", method = RequestMethod.GET)
-	public ModelAndView search() {
-		
+	@RequestMapping(value = "/searchRecipe", method = RequestMethod.POST)
+	public ModelAndView search(@RequestParam("inputText") String text) {
 		ModelAndView mv = new ModelAndView("list_and_search");
+		List<Recipe> recipes = RecipeData.findRecipes(text);
+		mv.addObject("recipes", recipes);
 		return mv;
 	}
 	
 	@RequestMapping(value="/createRecipe", method=RequestMethod.POST)
-	public  ModelAndView create(@ModelAttribute RecipeForm form) {
-		ModelAndView mv = new ModelAndView();
+	public  ModelAndView create(@Valid @ModelAttribute RecipeForm form, BindingResult result, RedirectAttributes redirectAttrs) {
+		ModelAndView mv = new ModelAndView();		
+		
+		if(result.hasErrors()) {
+			List<FieldError> fieldErrors = result.getFieldErrors();
+			for (FieldError fe : fieldErrors) {
+				redirectAttrs.addFlashAttribute(fe.getField() + "_error", fe.getDefaultMessage());
+			}
+			mv.setViewName("redirect:create_recipe");
+			return mv;
+		}
+		
 		try {
 			Recipe recipe;
 			if (form.getId() == null) {
@@ -149,11 +185,13 @@ public class RecipeController {
 		mv.addObject("recipeData", recipeData);
 		
 		TreeSet<Tag> tags = TagData.getSortedList();
-		MeasureType[] types = Ingredient.MeasureType.values();
+	
+		/*MeasureType[] types = Ingredient.MeasureType.values();
 		List<String> typeList = new ArrayList<String>();
 		for (MeasureType measureType : types) {
 			typeList.add(measureType.getText());
-		}
+		}*/
+		List<Measuretype> typeList = MeasuretypeData.all();
 		mv.addObject("tags", tags);
 		mv.addObject("measuretypes", typeList);
 		return mv;
@@ -163,7 +201,7 @@ public class RecipeController {
 	@RequestMapping(value="/modify_recipe", method=RequestMethod.POST)
 	public ModelAndView modifyRecipe(@ModelAttribute RecipeForm form) {
 		ModelAndView mv = new ModelAndView("view_recipe");
-		updateRecipe(form);
+		//updateRecipe(form);
 		
 		
 		return mv;
@@ -173,11 +211,13 @@ public class RecipeController {
 	public ModelAndView getCreateRecipe() {
 		TreeSet<Tag> tags = TagData.getSortedList();
 		
-		MeasureType[] types = Ingredient.MeasureType.values();
+		/*MeasureType[] types = Ingredient.MeasureType.values();
 		List<String> typeList = new ArrayList<String>();
 		for (MeasureType measureType : types) {
 			typeList.add(measureType.getText());
-		}
+		}*/
+		List<Measuretype> typeList = MeasuretypeData.all();
+
 		ModelAndView mv = new ModelAndView("create_modify_recipe");
 		mv.addObject("tags", tags);
 		mv.addObject("measuretypes", typeList);
@@ -198,10 +238,10 @@ public class RecipeController {
 	}
 	
 	@RequestMapping(value = "/recipe", method={RequestMethod.POST, RequestMethod.GET})
-	public ModelAndView getRecipe(@RequestParam("id") String id){
+	public ModelAndView getRecipe(@RequestParam("id") Long id){
 		ModelAndView mv = new ModelAndView("view_recipe");
 		
-		Recipe recipe = RecipeData.get(Recipe.class, Long.valueOf(id));
+		Recipe recipe = RecipeData.get(Recipe.class, id);
 		
 		//TODO: hantera alla fel. nullpointers och filinläsningsfel
 		RecipeResponse resp = new RecipeResponse(recipe);
@@ -250,7 +290,6 @@ public class RecipeController {
 		
 		
 		
-		//TODO: skapa eget json object och sätt värden från olika saker?
 		return resp;
 		//return new ModelAndView("NewFile");
 		
@@ -298,7 +337,8 @@ public class RecipeController {
 			Ingredient in = new Ingredient();
 			in.setName(ingParts[0]);
 			in.setAmount(Integer.valueOf(ingParts[1]));
-			in.setMeasureType(MeasureType.fromString(ingParts[2]));
+			Measuretype measuretype = MeasuretypeData.get(Long.valueOf(ingParts[2]));
+			in.setMeasuretype(measuretype);
 			in.setRecipe(recipe);
 			ins.add(in);
 		}
@@ -334,26 +374,29 @@ public class RecipeController {
 		HashSet<Tag> InTags = Sets.newHashSet(Iterables.transform(longs, Functions.idsToTags));
 		recipe.setTags(InTags);
 
-		Set<Ingredient> ins = new HashSet<Ingredient>();
-		String[] inins = form.getIngredients();
-		Set<Ingredient> staying = new HashSet<Ingredient>();
-		for (int i = 0; i < inins.length; i++) {
-			Ingredient in = new Ingredient();
-			
-			String[] ingParts = inins[i].split(";;");
-			if (ingParts.length == 1 && NumberUtils.isNumber(ingParts[0])) {
-				in = IngredientData.get(Ingredient.class, Long.valueOf(ingParts[0]));
-				staying.add(in);
-			} else if (ingParts.length == 3){
-				in.setName(ingParts[0]);
-				in.setAmount(Integer.valueOf(ingParts[1]));
-				in.setMeasureType(MeasureType.fromString(ingParts[2]));
+		if (form.getIngredients() != null) {
+			Set<Ingredient> ins = new HashSet <Ingredient>();
+			String[] inins = form.getIngredients();
+			Set<Ingredient> staying = new HashSet<Ingredient>();
+			for (int i = 0; i < inins.length; i++) {
+				Ingredient in = new Ingredient();
+
+				String[] ingParts = inins[i].split(";;");
+				if (ingParts.length == 1 && NumberUtils.isNumber(ingParts[0])) {
+					in = IngredientData.get(Ingredient.class, Long.valueOf(ingParts[0]));
+					staying.add(in);
+				} else if (ingParts.length == 3){
+					in.setName(ingParts[0]);
+					in.setAmount(Integer.valueOf(ingParts[1]));
+					in.setMeasuretype(MeasuretypeData.get(Long.valueOf(ingParts[2])));
+				}
+				in.setRecipe(recipe);
+				ins.add(in);
 			}
-			in.setRecipe(recipe);
-			ins.add(in);
+			removeOrphanedIngredients(recipe.getIngredients(), staying);
+			recipe.setIngredients(ins);
 		}
-		removeOrphanedIngredients(recipe.getIngredients(), staying);
-		recipe.setIngredients(ins);
+		
 		Recipe updatedRecipe = RecipeData.updateRecipe(recipe);
 		return updatedRecipe;
 	}

@@ -58,13 +58,10 @@ public class RecipeData extends AbstractData{
 	@SuppressWarnings("unchecked")
 	public static List<Recipe> findRecipes(String searchString) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		List<Recipe> recipes = session.createCriteria(Recipe.class).list();
-
 		
-		/*Session session = HibernateUtil.getSessionFactory().openSession();
-		Query q = session.createQuery("From Recipe re where re.name LIKE :=searchString");
+		Query q = session.createQuery("From Recipe re where re.name LIKE CONCAT('%', :searchString, '%'))");
 		q.setParameter("searchString", searchString);
-		List<Recipe> recipes = q.list();*/
+		List<Recipe> recipes = q.list();
 		session.close();
 		return recipes;
 	}

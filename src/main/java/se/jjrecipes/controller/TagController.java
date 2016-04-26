@@ -26,14 +26,21 @@ import se.jjrecipes.function.Functions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 public class TagController {
+	private static Logger logger = LoggerFactory.getLogger(TagController.class); //slf4j logger
+
+	
 	
 	@RequestMapping("/tags") 
 	public ModelAndView tags() {
 		TreeSet<Tag> tags = TagData.getSortedList();
 		ModelAndView mv = new ModelAndView("tags");
 		mv.addObject("tags", tags);
+		logger.info("READING TAGS");
 		return mv;
 	}
 
@@ -63,8 +70,7 @@ public class TagController {
 	
 	@RequestMapping(value="/removeTag", method = RequestMethod.POST)
 	public ModelAndView removeTag(@RequestParam("tagId") long id) {
-		TagData.deleteById(Tag.class, id);
-	
+		TagData.deleteById(id);
 		return new ModelAndView("redirect:tags");
 	}
 }

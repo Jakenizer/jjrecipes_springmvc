@@ -1,17 +1,19 @@
 package se.jjrecipes.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "ingredient")
 public class Ingredient extends BaseEntity{
-	
+	/*
 	public enum MeasureType {
 		TSK("tsk"),
 		MSK("msk"),
@@ -21,8 +23,8 @@ public class Ingredient extends BaseEntity{
 		DECI("dl"),
 		LITRE("liter"),
 		GRAMS("gram"),
-		KILO("kg"),
-		STYCKEN("st"),
+		KILO("kilo"),
+		STYCKEN("stycken"),
 		NONE("");
 		
 		private String text;
@@ -45,11 +47,12 @@ public class Ingredient extends BaseEntity{
 			} 
 			throw new IllegalArgumentException("null or faulty value");
 		}
-	}
+	}*/
 	
 	private String name;
 	private int amount;
-	private MeasureType measureType;
+	//private MeasureType measureType;
+	private Measuretype measuretype;
 	private Recipe recipe;
 	
 	public String getName() {
@@ -64,7 +67,7 @@ public class Ingredient extends BaseEntity{
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	
+	/*
 	@Enumerated(EnumType.STRING)	
 	public MeasureType getMeasureType() {
 		return measureType;
@@ -72,9 +75,18 @@ public class Ingredient extends BaseEntity{
 	
 	public void setMeasureType(MeasureType measureType) {
 		this.measureType = measureType;
+	}*/
+	
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "measuretype_id")
+	public Measuretype getMeasuretype() {
+		return measuretype;
 	}
-		
-	@ManyToOne(fetch = FetchType.LAZY)
+	public void setMeasuretype(Measuretype measure) {
+		this.measuretype = measure;
+	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "recipe_id", nullable = false)
 	public Recipe getRecipe() {
 		return recipe;

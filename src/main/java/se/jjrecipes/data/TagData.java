@@ -1,7 +1,9 @@
 package se.jjrecipes.data;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.CacheStoreMode;
@@ -13,6 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
 import se.jjrecipes.hibernate.HibernateUtil;
 
@@ -67,5 +70,14 @@ public class TagData extends AbstractData {
 		Tag tag = (Tag) q.uniqueResult();
 		session.close();
 		return tag;
+	}
+	
+	public static boolean deleteById(Long id) {
+		Tag t = get(Tag.class, id);
+		Set<Recipe> recipes = t.getRecipes();
+		for (Recipe recipe : recipes) {
+			recipe.getTags().remove(t);
+		}
+		return deleteById(Tag.class, id);
 	}
 }

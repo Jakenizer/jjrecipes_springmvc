@@ -29,7 +29,7 @@
 		<div class="bigBox">
 			<div id="headerDiv">
 				<h1>${responseData.name}</h1>
-				<form action="modify_recipe">				
+				<form action="modify_recipe" method="get">				
 					<input type="hidden" name="recipeID" value="${responseData.id}">
 					<input type="image" src="resources/image/edit-icon.png">
 				</form>
@@ -57,9 +57,9 @@
       		<div id="ingredientCont">
       			<h2>Ingredienser</h2>
       			<c:if test="${not empty responseData.tags}">
-	      			<ul>
+		      		<ul class="list-group">
 	      			<c:forEach items="${responseData.ingredients}" var="ing">
-	      				<li>${ing.name}</li>
+	      				<li class="list-group-item">${ing.name}</li>
 	      			</c:forEach>
 	      			</ul>		
       			</c:if>

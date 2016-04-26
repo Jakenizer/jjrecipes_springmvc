@@ -11,19 +11,8 @@ function logout() {
 }
 
 function removeTag(id) {
-    var token = $("meta[name='_csrf']").attr("content");
-	var header = $("meta[name='_csrf_header']").attr("content");
-	var headers = {};
-	headers[header] = token;
 	$("#tagId").val(id);
 	$("#removeTag").submit();
-	/*
-	$.ajax({
-         type : 'POST',
-         url : '/JJRecipes/removeTag',
-         data: {tagId : id},
-         headers: headers
-	})*/
 }
 
 function searchByTags() {
