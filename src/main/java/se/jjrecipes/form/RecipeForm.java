@@ -1,15 +1,13 @@
 package se.jjrecipes.form;
 
-import java.util.List;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-import se.jjrecipes.validation.StringArrayInputFormat;
 import se.jjrecipes.validation.IngredientValidationDoer;
+import se.jjrecipes.validation.StringArrayInputFormat;
 import se.jjrecipes.validation.TagValidationDoer;
 
 public class RecipeForm {
@@ -44,12 +42,7 @@ public class RecipeForm {
 	public void setName(String name) {
 		this.name = name;
 	}
-	/*public List<Object> getIngredient() {
-		return ingredient;
-	}
-	public void setIngredient(List<Object> ingredient) {
-		this.ingredient = ingredient;
-	}*/
+
 	public String[] getIngredients() {
 		return ingredient == null ? new String[0] : ingredient;
 	}

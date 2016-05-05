@@ -38,10 +38,6 @@ public class StringArrayValidator implements ConstraintValidator<StringArrayInpu
             return false;
 		}
 		
-		
 		return true;
 	}
-	
-	 
-
 }

@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -364,6 +363,8 @@ public class RecipeController {
 	
 	private Recipe updateRecipe(RecipeForm form) {
 		Recipe recipe = RecipeData.get(Recipe.class, form.getId());
+		if (recipe == null) throw new IllegalArgumentException("Recipe with Id " + form.getId() + " not found.");
+			
 		recipe.setName(form.getName());
 		recipe.setContent(form.getContent());
 		recipe.setImage(recipe.getImage());

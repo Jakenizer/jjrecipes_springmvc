@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 import se.jjrecipes.util.IngredientFromJSON;
+import se.jjrecipes.util.IngredientUtils;
 import se.jjrecipes.util.JSONConverter;
 
 public class IngredientValidationDoer extends AbstractValidationDoer {
@@ -15,7 +16,7 @@ public class IngredientValidationDoer extends AbstractValidationDoer {
 		
 		String [] in = (String[]) input;
 		String str;
-		if (isOneObject(in)) {
+		if (IngredientUtils.isSingleObject(in)) {
 			str = Arrays.toString(in); 
 			str = str.replace("[", "").replace("]", "");
 			IngredientFromJSON pojo = JSONConverter.toIngredientPojo(str);
@@ -52,14 +53,4 @@ public class IngredientValidationDoer extends AbstractValidationDoer {
 		return false;
 	}
 	
-	private boolean isOneObject(String[] arr) {
-		String str = Arrays.toString(arr);
-		int count = StringUtils.countMatches(str, "name");
-
-		if (count == 1) return true;
-		
-		return false;
-		
-	}
-
 }
