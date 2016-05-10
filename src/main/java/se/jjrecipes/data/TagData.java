@@ -1,14 +1,10 @@
 package se.jjrecipes.data;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CacheStoreMode;
-
-import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;

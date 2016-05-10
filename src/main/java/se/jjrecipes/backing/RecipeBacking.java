@@ -1,10 +1,7 @@
 package se.jjrecipes.backing;
 
-import java.util.Set;
-
 import org.springframework.web.multipart.MultipartFile;
 
-import se.jjrecipes.entity.Ingredient;
 
 public class RecipeBacking {
 	private String name;

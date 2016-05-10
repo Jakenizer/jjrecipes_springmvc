@@ -2,7 +2,6 @@ package se.jjrecipes.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -14,14 +13,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.HibernateException;
 import org.imgscalr.Scalr;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,7 +31,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -50,19 +45,19 @@ import se.jjrecipes.entity.Measuretype;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
 import se.jjrecipes.exception.ImageException;
+import se.jjrecipes.exception.JJRuntimeException;
 import se.jjrecipes.form.RecipeForm;
 import se.jjrecipes.function.Functions;
 import se.jjrecipes.response.RecipeResponse;
+import se.jjrecipes.util.IngredientFromJSON;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
  
 @Controller
 public class RecipeController {
-	
-	@Autowired
-    private ServletContext servletContext;
-	
+		
 	@RequestMapping(value = "/initMeasuretypes", method = RequestMethod.GET)
 	public String initMeasuretypes(Model model) {
 		//MeasuretypeData.add("gram", "g");
@@ -129,7 +124,7 @@ public class RecipeController {
 
 	@RequestMapping(value = "/list_and_search", method = RequestMethod.GET)
 	public ModelAndView listAndSearch() {
-		List<Recipe> recipes = RecipeData.listRecipes();
+		Set<Recipe> recipes = RecipeData.sortedList();
 		ModelAndView mv = new ModelAndView("list_and_search");
 		mv.addObject("recipes", recipes);
 		return mv;
@@ -222,19 +217,6 @@ public class RecipeController {
 		mv.addObject("measuretypes", typeList);
 		return mv;
 	}
-
-
-	
-	@ExceptionHandler(ImageException.class)
-	public ModelAndView handleException(ImageException ex) {
-
-		ModelAndView model = new ModelAndView("error");
-		model.addObject("errorType", ex.getType());
-		model.addObject("message", ex.getMessage());
-		model.addObject("returnpage", "list_and_search");
- 
-		return model;
-	}
 	
 	@RequestMapping(value = "/recipe", method={RequestMethod.POST, RequestMethod.GET})
 	public ModelAndView getRecipe(@RequestParam("id") Long id){
@@ -262,7 +244,7 @@ public class RecipeController {
 		mv.addObject("responseData", resp);
 		return mv;
 	}
-	
+	/*
 	@RequestMapping(value = "/loadRecipe", method=RequestMethod.POST)
 	public @ResponseBody RecipeResponse loadRecipe(@RequestParam("redId") String recid){
 		
@@ -293,15 +275,15 @@ public class RecipeController {
 		//return new ModelAndView("NewFile");
 		
 		
-	}
+	}*/
 	
 	private Recipe createNewRecipe(RecipeForm form) {
 		MultipartFile file = form.getFile();
 		String name = form.getName();
 		String content = form.getContent();
-		String[] ingredients = form.getIngredients();
 		List<String> tags = Arrays.asList(form.getTags());
 
+		Recipe recipe = new Recipe();
 		byte[] imageInBytes = null;
 		if (!file.isEmpty()) {
 			String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1);
@@ -326,21 +308,23 @@ public class RecipeController {
 			}
 
 		}
-		Recipe recipe = new Recipe();
+		if (imageInBytes!= null && imageInBytes.length > 0) {
+			recipe.setImage(imageInBytes);
+		}
+		
 		recipe.setName(name);
 		recipe.setContent(content);
 		Set<Ingredient> ins = new HashSet<Ingredient>();
-		for (int i = 0; i < ingredients.length; i++) {
-			String[] ingParts = ingredients[i].split(";;");
-
+		List<IngredientFromJSON> ingredients = Lists.transform(Arrays.asList(form.getIngredients()), Functions.jsonToJava);
+		for (IngredientFromJSON jin : ingredients) {
 			Ingredient in = new Ingredient();
-			in.setName(ingParts[0]);
-			in.setAmount(Integer.valueOf(ingParts[1]));
-			Measuretype measuretype = MeasuretypeData.get(Long.valueOf(ingParts[2]));
-			in.setMeasuretype(measuretype);
+			in.setName(jin.getName());
+			in.setAmount(jin.getAmount());
+			in.setMeasuretype(MeasuretypeData.get(Long.valueOf(jin.getMeasureType())));
 			in.setRecipe(recipe);
 			ins.add(in);
 		}
+
 		recipe.setIngredients(ins);
 
 		//create or get Tags and add
@@ -353,10 +337,6 @@ public class RecipeController {
 			taggers.add(aTag);
 		}
 		recipe.setTags(taggers);
-
-		if (imageInBytes!= null && imageInBytes.length > 0) {
-			recipe.setImage(imageInBytes);
-		}
 
 		return RecipeData.addRecipe(recipe);
 	}
@@ -375,21 +355,21 @@ public class RecipeController {
 		HashSet<Tag> InTags = Sets.newHashSet(Iterables.transform(longs, Functions.idsToTags));
 		recipe.setTags(InTags);
 
-		if (form.getIngredients() != null) {
+		List<IngredientFromJSON> ingredients = Lists.transform(Arrays.asList(form.getIngredients()), Functions.jsonToJava);
+
+		if (ingredients != null) {
 			Set<Ingredient> ins = new HashSet <Ingredient>();
-			String[] inins = form.getIngredients();
 			Set<Ingredient> staying = new HashSet<Ingredient>();
-			for (int i = 0; i < inins.length; i++) {
+			for (IngredientFromJSON jing : ingredients) {
 				Ingredient in = new Ingredient();
 
-				String[] ingParts = inins[i].split(";;");
-				if (ingParts.length == 1 && NumberUtils.isNumber(ingParts[0])) {
-					in = IngredientData.get(Ingredient.class, Long.valueOf(ingParts[0]));
+				if (jing.getId() != null) {
+					in = IngredientData.get(Ingredient.class, jing.getId());
 					staying.add(in);
-				} else if (ingParts.length == 3){
-					in.setName(ingParts[0]);
-					in.setAmount(Integer.valueOf(ingParts[1]));
-					in.setMeasuretype(MeasuretypeData.get(Long.valueOf(ingParts[2])));
+				} else {
+					in.setName(jing.getName());
+					in.setAmount(jing.getAmount());
+					in.setMeasuretype(MeasuretypeData.get(jing.getMeasureType()));
 				}
 				in.setRecipe(recipe);
 				ins.add(in);
@@ -409,5 +389,27 @@ public class RecipeController {
 				IngredientData.deleteById(Ingredient.class, ingredient.getId());
 			}
 		}
+	}
+	
+	//--------------- Exception handling -------------------------------//
+	@ExceptionHandler(JJRuntimeException.class)
+	public ModelAndView handleJJRuntime(JJRuntimeException ex) {
+		ModelAndView model = new ModelAndView("error");
+		model.addObject("errorType", ex.getClass().getName());
+		model.addObject("message", ex.getMessage());
+		model.addObject("returnpage", "list_and_search");
+ 
+		return model;
+	}
+	
+	@ExceptionHandler(ImageException.class)
+	public ModelAndView handleImageException(ImageException ex) {
+
+		ModelAndView model = new ModelAndView("error");
+		model.addObject("errorType", ex.getType());
+		model.addObject("message", ex.getMessage());
+		model.addObject("returnpage", "list_and_search");
+ 
+		return model;
 	}
 }

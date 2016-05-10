@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="recipe")
-public class Recipe extends BaseEntity {
+public class Recipe extends BaseEntity implements Comparable<Recipe>{
 
 	private String name;
 	private String content;
@@ -87,5 +87,10 @@ public class Recipe extends BaseEntity {
 			return true;
 		
 		return false;
+	}
+
+	@Override
+	public int compareTo(Recipe other) {
+		return name.compareToIgnoreCase(other.getName());
 	}
 }

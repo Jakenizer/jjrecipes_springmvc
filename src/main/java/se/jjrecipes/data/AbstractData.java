@@ -1,7 +1,6 @@
 package se.jjrecipes.data;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import se.jjrecipes.entity.BaseEntity;
 import se.jjrecipes.hibernate.HibernateUtil;

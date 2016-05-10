@@ -1,11 +1,9 @@
 package se.jjrecipes.validation;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import se.jjrecipes.util.IngredientFromJSON;
-import se.jjrecipes.util.IngredientUtils;
 import se.jjrecipes.util.JSONConverter;
 
 public class IngredientValidationDoer extends AbstractValidationDoer {
@@ -14,43 +12,21 @@ public class IngredientValidationDoer extends AbstractValidationDoer {
 	public boolean validate(Object input) { 
 		if (!(input instanceof String[])) return false;
 		
-		String [] in = (String[]) input;
-		String str;
-		if (IngredientUtils.isSingleObject(in)) {
-			str = Arrays.toString(in); 
-			str = str.replace("[", "").replace("]", "");
-			IngredientFromJSON pojo = JSONConverter.toIngredientPojo(str);
-			if(pojo == null) return false;
-			
-			if (!nameValid(pojo.getName()) || !amountValid(pojo.getAmount()) || !measureTypeValid(pojo.getMeasureType()))
+		String[] inputt = (String[]) input;
+		
+		for (String obj : inputt) {
+			IngredientFromJSON pojo = new IngredientFromJSON();
+			if (NumberUtils.isNumber(obj) && Long.valueOf(obj) <= 0) {
 				return false;
-			
-		} else {
-			for (String row : in) {
-				IngredientFromJSON pojo = JSONConverter.toIngredientPojo(row);
-				if(pojo == null) return false;
-
-				if (!nameValid(pojo.getName()) || !amountValid(pojo.getAmount()) || !measureTypeValid(pojo.getMeasureType()))
+			} else if (JSONConverter.isConvertable(obj)){
+				pojo = JSONConverter.toIngredientPojo(obj);
+				if (pojo == null || StringUtils.isBlank(pojo.getName())) {
 					return false;
+				}
 			}
+			
 		}
 		return true;
-	}
-
-	private boolean measureTypeValid(Long measureType) {
-		if (measureType < 1) return false;
-		return true;
-	}
-
-	private boolean amountValid(Integer amount) {
-		if (amount < 0) return false;
-		return true;
-	}
-
-	private boolean nameValid(String name) {
-		if (name.length() >= 1 && name.length() <= 45)
-			return true;
-		return false;
 	}
 	
 }

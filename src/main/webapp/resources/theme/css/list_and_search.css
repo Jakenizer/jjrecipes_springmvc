@@ -7,6 +7,7 @@ li.listElement {
 	display: table;
 	width: 100%;
 	margin-bottom: 5px;	
+	cursor:pointer;
 }
 
 li.listElement div {

@@ -38,13 +38,11 @@ $(document).ready(function(){
        if (amount) {
     	   json['amount'] = amount;
     	   text += " " + amount;
-    	   val += ";;" + amount;
-    	   if (type)
+    	   if (type) {
     		   json['measureType'] = typeId;
     		   text += " " + type;
-    	   	val += ";;" + typeId;
+    		}
        }
-    	 //var numItems =  $("#ingredientList li").length;
     	 
        $('#ingredientList').append('<li><input type="checkbox" name="ingredients" value=' + JSON.stringify(json) + ' checked>' + text + '</li>');
     });
@@ -55,6 +53,15 @@ $(document).ready(function(){
     	$('#selectedTags').append('<li><input type="checkbox" name="tags" value="' + val + '" checked>' + text + '</li>');
     })
 });
+/*
+function fixAndSave() {
+	var json = [];	
+	$.each($('[name="ingredients"]'), function() {
+		json.push($(this).val());
+	});
+	$('[name="ingredientjson"]').val(JSON.stringify(json));
+	$('#createRecipe').submit();
+}*/
 </script>
 </head>
 <body>
@@ -64,7 +71,7 @@ $(document).ready(function(){
 
 
 	<div id="bigBox">
-		<form action="createRecipe" method="post" enctype="multipart/form-data">
+		<form id="createRecipe" action="createRecipe" method="post" enctype="multipart/form-data">
 			Namn:<br><input name="name" required="required" maxlength="50" value="${recipeData.name}"/><span class="fieldError">${name_error }</span><br><br>
 			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1001">${recipeData.content}</textarea><br><span class="fieldError">${content_error }</span><br><br>
 			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>
@@ -81,7 +88,7 @@ $(document).ready(function(){
 			<div>
 				<ul id="ingredientList">
 					<c:forEach items="${recipeData.ingredients}" var="ingredient">
-						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.name} ${ingredient.amount} ${ingredient.measureType}</li>
+						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.name} ${ingredient.amount} ${ingredient.measureType.name}</li>
 					</c:forEach>
 				</ul>
 		  </div>
@@ -105,8 +112,10 @@ $(document).ready(function(){
 		  
 		  <br>
 		  <input type="file" name="file" size="50"><br><br>
-		  <input type="submit" value="Spara">
+<!-- 		  <button type="button" onclick="fixAndSave();">Spara</button> -->
+ 		  <input type="submit" value="Spara">
 		  
+		  <input type="hidden" name="ingredientjson" />
 		  <c:if test="${not empty recipeData}">
 			  	<input type="hidden" name="id" value="${recipeData.id}">
 		  </c:if>

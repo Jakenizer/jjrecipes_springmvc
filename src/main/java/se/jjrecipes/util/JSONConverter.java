@@ -24,4 +24,15 @@ public class JSONConverter {
 
 		return obj;
 	}
+	
+	public static boolean isConvertable(String obj) {
+		ObjectMapper mapper = new ObjectMapper();
+		boolean result = true;
+		try {
+			mapper.readValue(obj, IngredientFromJSON.class);
+		} catch (IOException e) {
+			result = false;
+		}
+		return result;
+	}
 }

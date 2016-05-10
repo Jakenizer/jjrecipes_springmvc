@@ -10,4 +10,14 @@
 <script src="<c:url value="/resources/js/jquery-1.11.2.js" />"></script>
 <script src="<c:url value="/resources/js/jquery-ui-1.11.4/jquery-ui.min.js" />"></script>
 
+
+
+</head>
+
+<body>
+
 <div>recipe name goes here</div>
+
+</body>
+
+</html>
