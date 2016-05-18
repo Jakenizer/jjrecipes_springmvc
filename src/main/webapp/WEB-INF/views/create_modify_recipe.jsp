@@ -26,6 +26,8 @@
 <title>JJRecipes create modify recipe</title>
 <script type="text/javascript">
 $(document).ready(function(){
+   setActiveNav("#nav_createrecipe");
+	
     $('#addIngredient').click(function() {		
        var name = $('#newIngredient').val();
        var amount = $('#amount').val();
@@ -71,7 +73,7 @@ function fixAndSave() {
 
 
 	<div id="bigBox">
-		<form id="createRecipe" action="createRecipe" method="post" enctype="multipart/form-data">
+		<form id="createRecipe" action="createModifyRecipe" method="post" enctype="multipart/form-data">
 			Namn:<br><input name="name" required="required" maxlength="50" value="${recipeData.name}"/><span class="fieldError">${name_error }</span><br><br>
 			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1001">${recipeData.content}</textarea><br><span class="fieldError">${content_error }</span><br><br>
 			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>

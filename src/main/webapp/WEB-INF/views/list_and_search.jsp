@@ -26,6 +26,7 @@
 
 <script type="text/javascript">
          $(document).ready(function() {
+        	 setActiveNav("#nav_listrecipes");
         	 $('.listAnchor').click(function(event){
 					$("#idVal").val(event.target.id);
             	$("#submitRec").submit();

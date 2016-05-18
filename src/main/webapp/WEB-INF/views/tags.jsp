@@ -20,6 +20,11 @@
 <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
 <link href="<c:url value="/resources/css/tags.css" />" rel="stylesheet">
 
+<script type="text/javascript">
+         $(document).ready(function() {
+        	 	setActiveNav("#nav_tags");
+         });
+</script>
 <title>JJRecipes tags</title>
 </head>
 <body>
@@ -28,11 +33,10 @@
 			
 	<div class="bigBox">
 	
-	<div id="centerdude">
 	
 		<form action="nyTagg">
 		Skapa ny tag:<br>
-		<input name="newTag" style="width:250px"> <input type="submit" value="Skapa tag"><span>${error}</span>
+		<input name="newTag" style="width:250px"> <input type="submit" value="Skapa tag"><span class="fieldError">${error}</span>
 	</form>
 			<form action="searchTag" method="get" name="tagForm">
 				Välj de taggar du vill söka med<br>
@@ -58,7 +62,6 @@
 			  <button type="button" onclick="searchByTags();">Sök på markerade</button>
 			  <input type="hidden" value="" name="selectedValues">
 			</form>	
-	</div>
 	
 	<script type="text/javascript">
 		$('.list-group-item').click(function () {

@@ -139,8 +139,8 @@ public class RecipeController {
 		return mv;
 	}
 	
-	@RequestMapping(value="/createRecipe", method=RequestMethod.POST)
-	public  ModelAndView create(@Valid @ModelAttribute RecipeForm form, BindingResult result, RedirectAttributes redirectAttrs) {
+	@RequestMapping(value="/createModifyRecipe", method=RequestMethod.POST)
+	public  ModelAndView createModify(@Valid @ModelAttribute RecipeForm form, BindingResult result, RedirectAttributes redirectAttrs) {
 		ModelAndView mv = new ModelAndView();		
 		
 		if(result.hasErrors()) {
@@ -179,37 +179,15 @@ public class RecipeController {
 		mv.addObject("recipeData", recipeData);
 		
 		TreeSet<Tag> tags = TagData.getSortedList();
-	
-		/*MeasureType[] types = Ingredient.MeasureType.values();
-		List<String> typeList = new ArrayList<String>();
-		for (MeasureType measureType : types) {
-			typeList.add(measureType.getText());
-		}*/
 		List<Measuretype> typeList = MeasuretypeData.all();
 		mv.addObject("tags", tags);
 		mv.addObject("measuretypes", typeList);
 		return mv;
 	}
 	
-
-	@RequestMapping(value="/modify_recipe", method=RequestMethod.POST)
-	public ModelAndView modifyRecipe(@ModelAttribute RecipeForm form) {
-		ModelAndView mv = new ModelAndView("view_recipe");
-		//updateRecipe(form);
-		
-		
-		return mv;
-	}
-	
 	@RequestMapping("/create_recipe")
 	public ModelAndView getCreateRecipe() {
 		TreeSet<Tag> tags = TagData.getSortedList();
-		
-		/*MeasureType[] types = Ingredient.MeasureType.values();
-		List<String> typeList = new ArrayList<String>();
-		for (MeasureType measureType : types) {
-			typeList.add(measureType.getText());
-		}*/
 		List<Measuretype> typeList = MeasuretypeData.all();
 
 		ModelAndView mv = new ModelAndView("create_modify_recipe");

@@ -1,27 +1,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script src="<c:url value="/resources/js/main.js" />"></script>
 
-<!-- 
-<div id="topContainer">
-	<nav id="listCont">
-		<ul>
-			<li class="topMenuItem"><a href="#">Min sida</a></li>
-			<li class="topMenuItem"><a href="#">Recept</a>
-				<ul>
-					<li><a href="list_and_search">Lista och sök recept</a></li>
-					<li><a href="create_modify_recipe">Skapa nytt recept</a></li>
-					<li class="topMenuItem"><a href="#">Favoriter</a></li>
-				</ul>
-			</li>
-			<li class="topMenuItem"><a href="tags"> Hantera taggar</a></li>
-			<li class="topMenuItem"><a href="javascript:void(0);" onclick="logout(); return false;"> Logga ut</a></li>
-		</ul>
-	</nav>
-</div>
- -->
-
-
-
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -38,9 +17,9 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-      	<li><a href="/JJRecipes/list_and_search">Lista recept</a></li>
-      	<li><a href="/JJRecipes/create_recipe">Skapa nytt recept</a></li>
-        <li class="active"><a href="/JJRecipes/tags">Taggar</a></li>
+      	<li id="nav_listrecipes"><a href="/JJRecipes/list_and_search">Lista recept</a></li>
+      	<li id="nav_createrecipe"><a href="/JJRecipes/create_recipe">Skapa nytt recept</a></li>
+        <li id="nav_tags"><a href="/JJRecipes/tags">Taggar</a></li>
         <li><a href="javascript:logout();">Logga ut</a></li>
         <!-- <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>

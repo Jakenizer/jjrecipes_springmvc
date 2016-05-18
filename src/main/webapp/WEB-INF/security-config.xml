@@ -8,18 +8,21 @@
  
 	<http auto-config="true">
 		<intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
-		<intercept-url pattern="/createRecipe" access="hasRole('ROLE_USER')" />
-		<intercept-url pattern="/create_modify_recipe" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/createModifyRecipe" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/create_recipe" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/list_and_search" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/tags" access="hasRole('ROLE_USER')" />
-		<intercept-url pattern="/recipes" access="hasRole('ROLE_USER')" />		
+		<intercept-url pattern="/nyTagg" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/searchTag" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/removeTag" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/recipe" access="hasRole('ROLE_USER')" />		
 		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMINISTRATOR')"/>
 		<!--  <logout logout-url="/logout" logout-success-url="/login" delete-cookies="JSESSIONID" /> -->
 		 
 		 
 		         <!-- Override default login and logout pages -->
         <form-login login-page="/login" 
-                             default-target-url="/tags" 
+                             default-target-url="/list_and_search" 
                              authentication-failure-url="/loginfail"
                              always-use-default-target="true" />
                              

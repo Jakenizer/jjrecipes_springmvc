@@ -25,3 +25,11 @@ function searchByTags() {
 	document.tagForm.selectedValues.value = vals;
 	document.tagForm.submit();
 }
+
+function setActiveNav(activeId) {
+	var allNavs = ["#nav_listrecipes", "#nav_createrecipe", "#nav_tags"];
+	for (var i = 0; i < allNavs.length; i++) {
+		$(allNavs[i]).removeClass("active");
+	}
+	$(activeId).addClass("active");
+}
