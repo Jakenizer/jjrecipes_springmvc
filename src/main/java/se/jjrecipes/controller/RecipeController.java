@@ -67,7 +67,7 @@ public class RecipeController {
 //		MeasuretypeData.add("centiliter", "cl");
 //		MeasuretypeData.add("deciliter", "dl");
 //		MeasuretypeData.add("liter", "l");
-//		MeasuretypeData.add("kryddmått", "krm");
+//		MeasuretypeData.add("kryddmÃ¥tt", "krm");
 //		MeasuretypeData.add("tesked", "tsk");
 //		MeasuretypeData.add("matsked", "msk");
 //		MeasuretypeData.add("stycken", "st");
@@ -97,7 +97,7 @@ public class RecipeController {
 	@RequestMapping(value = "/loginfail", method = RequestMethod.GET)
 	public ModelAndView loginfailed() {
 		ModelAndView mv = new ModelAndView("login");
-		mv.addObject("error", "Fel användarnamn eller lösenord");
+		mv.addObject("error", "Fel anvandarnamn eller losenord");
 		return mv;
 	}
 	
@@ -114,7 +114,7 @@ public class RecipeController {
 	    Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 	    boolean isAdmin = authorities.contains(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")) ? true : false;
 	    if (!isAdmin)
-	    	mv.addObject("error", "Du saknar behörighet till denna sida");
+	    	mv.addObject("error", "Du saknar behoerighet till denna sida");
 	    	
 		mv.addObject("title", "Spring Security Hello World");
 		mv.addObject("message", "This is protected page!"); 
@@ -157,7 +157,7 @@ public class RecipeController {
 			if (form.getId() == null) {
 				recipe = createNewRecipe(form);
 			} else {
-				//TODO: Kolla att ändringar har skett, annars uppdatera ej
+				//TODO: Kolla att Ã¤ndringar har skett, annars uppdatera ej
 				recipe = updateRecipe(form);
 			}
     		mv.setViewName("redirect:recipe?id="+recipe.getId());
@@ -202,7 +202,7 @@ public class RecipeController {
 		
 		Recipe recipe = RecipeData.get(Recipe.class, id);
 		
-		//TODO: hantera alla fel. nullpointers och filinläsningsfel
+		//TODO: hantera alla fel. nullpointers och filinlÃ¤sningsfel
 		RecipeResponse resp = new RecipeResponse(recipe);
 		if (resp.getImage() == null) {
 			URL resource = RecipeController.class.getClassLoader().getResource("image/recipe-default.jpg");
@@ -212,7 +212,7 @@ public class RecipeController {
 				byte[] byteArray = IOUtils.toByteArray(inStream);
 				resp.setImage(byteArray);
 			} catch (IOException e) {
-				mv.addObject("message", "Fel vid hämtning av defaultbild till recept");
+				mv.addObject("message", "Fel vid hamtning av defaultbild till recept");
 				mv.addObject("exception", e.getMessage());
 				mv.addObject("returnpage", "/JJRecipes/list_and_search");
 				mv.setViewName("error");
