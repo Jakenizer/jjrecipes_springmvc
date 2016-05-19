@@ -197,7 +197,7 @@
     <profile>
         <id>openshift</id>
         <build>
-            <finalName>{APP_NAME}</finalName>
+            <finalName>jjrecipes</finalName>
             <plugins>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
