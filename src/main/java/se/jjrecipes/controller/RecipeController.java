@@ -102,12 +102,12 @@ public class RecipeController {
 		String b = System.getenv("OPENSHIFT_MYSQL_DB_PORT");
 		String c = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
 		String d = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
-		String e = System.getenv("OPENSHIFT_MYSQL_DB_URL");
+		String e = System.getenv("OPENSHIFT_APP_NAME");
 		mv.addObject("host", a);
 		mv.addObject("port", b);
 		mv.addObject("usname", c);
 		mv.addObject("passw", d);
-		mv.addObject("myurl", e);
+		mv.addObject("appname", e);
 
 		return mv;
 	}
