@@ -98,6 +98,17 @@ public class RecipeController {
 	public ModelAndView loginfailed() {
 		ModelAndView mv = new ModelAndView("login");
 		mv.addObject("error", "Fel anvandarnamn eller losenord");
+		String a = System.getenv("OPENSHIFT_MYSQL_DB_HOST");
+		String b = System.getenv("OPENSHIFT_MYSQL_DB_PORT");
+		String c = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
+		String d = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
+		String e = System.getenv("OPENSHIFT_MYSQL_DB_URL");
+		mv.addObject("host", a);
+		mv.addObject("port", b);
+		mv.addObject("usname", c);
+		mv.addObject("passw", d);
+		mv.addObject("myurl", e);
+
 		return mv;
 	}
 	

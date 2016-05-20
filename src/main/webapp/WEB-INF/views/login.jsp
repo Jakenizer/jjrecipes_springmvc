@@ -35,7 +35,13 @@
 </body>
 </html>
  -->
-
+<div>
+	host: <c:out value="${host}"></c:out> <br>
+	port: <c:out value="${port}"></c:out><br>
+	username: <c:out value="${usname}"></c:out><br>
+	password: <c:out value="${passw}"></c:out><br>
+	myurl: <c:out value="${myurl}"></c:out><br>
+</div>
 <div class="container">
 
       <form name='f' action="login" method='POST' class="form-signin">
