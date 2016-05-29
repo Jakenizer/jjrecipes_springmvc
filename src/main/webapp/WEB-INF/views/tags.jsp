@@ -43,10 +43,10 @@
 				
 				<div class="list-group" id="tagList">
 					<c:forEach var="tag" items="${tags}"> 
-					  <button type="button" class="list-group-item" tagid="${tag.id}">
+					  <button type="button" class="list-group-item" data-tagid="${tag.id}">
 					  	${tag.name} 
 					  	<span class="pull-right">
-					  		 <span class="glyphicon glyphicon-remove" id="deleteBtn_${tag.id}">
+					  		 <span class="glyphicon glyphicon-trash" id="deleteBtn_${tag.id}">
 					  	</span></span> </button>
 	 			   </c:forEach>
 				</div>
@@ -68,7 +68,7 @@
 			$(this).toggleClass('active');
 		});
 		
-		$('.glyphicon-remove').click(function (){
+		$('.glyphicon-trash').click(function (){
 			var id = $(this).prop('id').split('_')[1];
 			removeTag(id);
 		});

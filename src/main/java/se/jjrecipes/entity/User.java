@@ -1,43 +1,48 @@
 package se.jjrecipes.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "appuser")
 public class User extends BaseEntity{
 	
-	private String firstName;
-	private String lastName;
+	private String firstname;
+	private String lastname;
 	private String username;
 	private String password;
-	//private Set<UserRole> userRole;
-
+	private byte enabled;
 	
 	@Column(name = "firstname")
-	public String getFirstName() {
-		return firstName;
+	public String getFirstname() {
+		return firstname;
 	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
 	}
 	
 	@Column(name = "lastname")
-	public String getLastName() {
-		return lastName;
+	public String getLastname() {
+		return lastname;
 	}
 	
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 	
-	public String getUserName() {
+	public String getUsername() {
 		return username;
 	}
 	
-	public void setUserName(String userName) {
-		this.username = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	public String getPassword() {
@@ -47,19 +52,14 @@ public class User extends BaseEntity{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	/*
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_role", joinColumns = { 
-			@JoinColumn(name = "user_id", nullable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) })
-	public Set<UserRole> getUserRole() {
-		return userRole;
+	
+
+	public byte getEnabled() {
+		return enabled;
 	}
-	
-	public void setUserRole(Set<UserRole> userRole) {
-		this.userRole = userRole;
-	}*/
-	
+	public void setEnabled(byte enabled) {
+		this.enabled = enabled;
+	}
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof User))

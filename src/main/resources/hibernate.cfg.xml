@@ -17,7 +17,6 @@
 		<mapping class="se.jjrecipes.entity.Favourite"></mapping>
 		<mapping class="se.jjrecipes.entity.Tag"></mapping>
 		<mapping class="se.jjrecipes.entity.Measuretype"></mapping>
-		
-		<!-- <mapping class="se.jjrecipes.entity.UserRole"></mapping> -->
+		<mapping class="se.jjrecipes.entity.UserRole"></mapping>
 	</session-factory>
 </hibernate-configuration>

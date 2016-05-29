@@ -18,6 +18,8 @@ import javax.validation.Valid;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.HibernateException;
 import org.imgscalr.Scalr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -39,16 +41,21 @@ import se.jjrecipes.data.IngredientData;
 import se.jjrecipes.data.MeasuretypeData;
 import se.jjrecipes.data.RecipeData;
 import se.jjrecipes.data.TagData;
+import se.jjrecipes.data.UserData;
+import se.jjrecipes.data.UserRoleData;
 import se.jjrecipes.entity.Ingredient;
 //import se.jjrecipes.entity.Ingredient.MeasureType;
 import se.jjrecipes.entity.Measuretype;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
+import se.jjrecipes.entity.User;
+import se.jjrecipes.entity.UserRole;
 import se.jjrecipes.exception.ImageException;
 import se.jjrecipes.exception.JJRuntimeException;
 import se.jjrecipes.form.RecipeForm;
 import se.jjrecipes.function.Functions;
 import se.jjrecipes.response.RecipeResponse;
+import se.jjrecipes.util.GeneralUtil;
 import se.jjrecipes.util.IngredientFromJSON;
 
 import com.google.common.collect.Iterables;
@@ -57,10 +64,12 @@ import com.google.common.collect.Sets;
  
 @Controller
 public class RecipeController {
-		
+	private static Logger logger = LoggerFactory.getLogger(RecipeController.class); //slf4j logger
+
+	/*
 	@RequestMapping(value = "/initMeasuretypes", method = RequestMethod.GET)
 	public String initMeasuretypes(Model model) {
-		//MeasuretypeData.add("gram", "g");
+//		MeasuretypeData.add("gram", "g");
 //		MeasuretypeData.add("milligram", "mg");
 //		MeasuretypeData.add("kilo", "kg");
 //		MeasuretypeData.add("milliliter", "ml");
@@ -71,15 +80,47 @@ public class RecipeController {
 //		MeasuretypeData.add("tesked", "tsk");
 //		MeasuretypeData.add("matsked", "msk");
 //		MeasuretypeData.add("stycken", "st");
-		
+//		
 		model.addAttribute("ok", "ok");
 		return "init_measuretypes";
 	}
-
+*/
+	/*
+	@RequestMapping(value = "/initUsers", method = RequestMethod.GET)
+	public String initUsersAndRoles(Model model) {
+		User u1 = new User();
+		u1.setFirstName("Jacob");
+		u1.setLastName("Flarup");
+		u1.setUserName("jackflamp");
+		u1.setPassword("skruttan15");
+		u1.setEnabled((byte) 1);
+		UserData.addUser(u1);
+		
+		UserRole ur = new UserRole();
+		ur.setRole("ROLE_USER");
+		ur.setUsername("jackflamp");
+		UserRoleData.addUserRole(ur);
+		
+		UserRole ur2 = new UserRole();
+		ur2.setRole("ROLE_ADMINISTRATOR");
+		ur2.setUsername("jackflamp");
+		UserRole userRole = UserRoleData.addUserRole(ur2);
+		
+		model.addAttribute("ok", "user and roles added: " + userRole.getRole() +  " : " + userRole.getUsername());
+		return "init_measuretypes";
+		
+	}*/
+	
+	@ModelAttribute
+	public void alwaysAdd(Model model) {
+		model.addAttribute("isAdmin", GeneralUtil.isAdmin());
+	}
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView start() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String loggedin = auth.getName();
+		logger.info("User with name: '" + loggedin + "' accessed default link");
 		ModelAndView mv;
 		if (auth.getPrincipal() == "anonymousUser")
 			mv = new ModelAndView("login");
@@ -88,9 +129,10 @@ public class RecipeController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@RequestMapping(value = "/loginx", method = RequestMethod.GET)
 	public ModelAndView login() {
 		ModelAndView mv = new ModelAndView("login");
+
 		return mv;
 	}
 
@@ -98,7 +140,7 @@ public class RecipeController {
 	public ModelAndView loginfailed() {
 		ModelAndView mv = new ModelAndView("login");
 		mv.addObject("error", "Fel anvandarnamn eller losenord");
-		String a = System.getenv("OPENSHIFT_MYSQL_DB_HOST");
+		/*String a = System.getenv("OPENSHIFT_MYSQL_DB_HOST");
 		String b = System.getenv("OPENSHIFT_MYSQL_DB_PORT");
 		String c = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
 		String d = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
@@ -107,7 +149,7 @@ public class RecipeController {
 		mv.addObject("port", b);
 		mv.addObject("usname", c);
 		mv.addObject("passw", d);
-		mv.addObject("appname", e);
+		mv.addObject("appname", e);*/
 
 		return mv;
 	}
@@ -118,20 +160,7 @@ public class RecipeController {
 		return mv;
 	}
  
-	@RequestMapping(value = "/admin", method = RequestMethod.GET)
-	public ModelAndView adminPage() {
-		ModelAndView mv = new ModelAndView("admin/admin");
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-	    boolean isAdmin = authorities.contains(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")) ? true : false;
-	    if (!isAdmin)
-	    	mv.addObject("error", "Du saknar behoerighet till denna sida");
-	    	
-		mv.addObject("title", "Spring Security Hello World");
-		mv.addObject("message", "This is protected page!"); 
-		return mv;
- 
-	}
+
 
 	@RequestMapping(value = "/list_and_search", method = RequestMethod.GET)
 	public ModelAndView listAndSearch() {

@@ -8,8 +8,10 @@ import java.util.TreeSet;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,7 @@ import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
 import se.jjrecipes.form.TagForm;
 import se.jjrecipes.function.Functions;
+import se.jjrecipes.util.GeneralUtil;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -33,7 +36,10 @@ import org.slf4j.LoggerFactory;
 public class TagController {
 	private static Logger logger = LoggerFactory.getLogger(TagController.class); //slf4j logger
 
-	
+	@ModelAttribute
+	public void alwaysAdd(Model model) {
+		model.addAttribute("isAdmin", GeneralUtil.isAdmin());
+	}
 	
 	@RequestMapping("/tags") 
 	public ModelAndView tags() {

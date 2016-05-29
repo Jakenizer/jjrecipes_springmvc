@@ -2,19 +2,24 @@ package se.jjrecipes.data;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
+import se.jjrecipes.entity.Recipe;
+import se.jjrecipes.entity.Tag;
 import se.jjrecipes.entity.User;
 import se.jjrecipes.hibernate.HibernateUtil;
 
-public class UserData {
+public class UserData extends AbstractData {
 	
 	@SuppressWarnings("unchecked")
 	public static List<User> listUsers() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Query q = session.createQuery("FROM User us"); 
-		List<User> users = (List<User>) q.list();
+		List<User> users = session.createCriteria(User.class).list();
 		return users;
 	}
 	
@@ -32,4 +37,22 @@ public class UserData {
 		return (User) q.uniqueResult();
 	}
 	
+	public static User addUser(User user) throws HibernateException {
+		Session ses = null;
+		User newUser;
+		try {
+			SessionFactory sf = HibernateUtil.getSessionFactory();
+			ses = sf.openSession();
+			ses.beginTransaction();
+
+			Long id = (Long) ses.save(user);
+			ses.getTransaction().commit();
+			newUser = (User) get(User.class, id);
+		} catch (HibernateException e) {
+			throw e;
+		} finally {
+			if (ses != null) ses.close();
+		}
+		return newUser;
+	}
 }

@@ -98,6 +98,14 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring.security.version}</version>
 		</dependency>
+		
+		<!-- http://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-jdbc</artifactId>
+	    <version>4.2.6.RELEASE</version>
+	</dependency>
+		
  
 		<!-- Spring Security JSP Taglib -->
 		<dependency>

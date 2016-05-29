@@ -20,6 +20,9 @@
       	<li id="nav_listrecipes"><a href="/JJRecipes/list_and_search">Lista recept</a></li>
       	<li id="nav_createrecipe"><a href="/JJRecipes/create_recipe">Skapa nytt recept</a></li>
         <li id="nav_tags"><a href="/JJRecipes/tags">Taggar</a></li>
+        <c:if test="${isAdmin}">
+        	<li><a href="/JJRecipes/admin">Admin</a></li>
+        </c:if>
         <li><a href="javascript:logout();">Logga ut</a></li>
         <!-- <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
