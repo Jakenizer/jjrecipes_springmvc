@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import se.jjrecipes.data.UserData;
@@ -87,6 +88,26 @@ public class AdminController {
 		
 	}
 	
+	/*
+	@RequestMapping(value = "/modifyuser", method = RequestMethod.POST)
+	public ModelAndView modifyUser() {
+		
+	}*/
+	
+	
+	@RequestMapping(value = "/deleteuser", method = RequestMethod.POST)
+	public ModelAndView deleteuser(@RequestParam(value = "userId", required = true) Long userId) {
+		ModelAndView mv = new ModelAndView("admin/admin");
+		boolean success = UserData.deleteById(User.class, userId);
+		if (!success) {
+        	mv.addObject("message", "Error while deleting user.");
+        	mv.addObject("returnpage", "admin");
+        	mv.addObject("exception", "");
+            mv.setViewName("error");
+		}
+    	return mv;
+	}
+	
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
 	public ModelAndView allUsers() {
 		List<User> users = UserData.listUsers();
@@ -95,7 +116,6 @@ public class AdminController {
 		
 		return mv;
 	}
-	
 
 	
 }

@@ -332,6 +332,8 @@ public class RecipeController {
 		
 		recipe.setName(name);
 		recipe.setContent(content);
+		
+		
 		Set<Ingredient> ins = new HashSet<Ingredient>();
 		List<IngredientFromJSON> ingredients = Lists.transform(Arrays.asList(form.getIngredients()), Functions.jsonToJava);
 		for (IngredientFromJSON jin : ingredients) {

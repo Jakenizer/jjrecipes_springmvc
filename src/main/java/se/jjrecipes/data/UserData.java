@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import se.jjrecipes.entity.Measuretype;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
 import se.jjrecipes.entity.User;
@@ -21,6 +22,10 @@ public class UserData extends AbstractData {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		List<User> users = session.createCriteria(User.class).list();
 		return users;
+	}
+	
+	public static User get(long id) {
+		return get(User.class, id);
 	}
 	
 	public static User findUser(Long userId) {

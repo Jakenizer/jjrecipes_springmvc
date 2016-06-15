@@ -35,6 +35,16 @@ $(document).ready(function() {
 		var contentDiv = $(this).data("content");
 		$("#" + contentDiv).show();
 	});
+	
+	$('.glyphicon-trash').click(function(event) {
+		var id = event.target.id.split('_')[1];
+		$('#userId').val(id);
+		$('#deleteuser').submit();
+	});
+	
+	$('.glyphicon-pencil').click(function(event) {
+		
+	});
 });
 
 </script>
@@ -57,16 +67,25 @@ $(document).ready(function() {
 				<c:if test="${not empty users}">
 					<div class="list-group">
 						<c:forEach var="user" items="${users}"> 
-						  <button type="button" class="list-group-item" data-userid="${user.id}">
-						  	${user.username} 
-						  	<span class="pull-right">
-						  		 <span class="glyphicon glyphicon glyphicon-pencil" id="updateBtn_${user.id}"></span> 
-						  		 <span class="glyphicon glyphicon-trash" id="deleteBtn_${user.id}"></span>
+						  <li class="list-group-item lassebanan" data-userid="${user.id}">
+						  <span class="pull-right">
+						  		 <span class="glyphicon glyphicon glyphicon-pencil pointercursor" id="updateBtn_${user.id}"></span> 
+						  		 <span class="glyphicon glyphicon-trash pointercursor" id="deleteBtn_${user.id}"></span>
 						  	</span> 
-						  	</button>
+						  	<div>Username: ${user.username}</div> 
+						  	<div>Firstname: ${user.firstname}</div> 
+						  	<div>Lastname: ${user.lastname}</div> 
+						  	
+						  	
+						  	</li>
 		 			   </c:forEach>
 					</div>
 				</c:if>
+				<form action="deleteuser" method="post" id="deleteuser">
+					<input type="hidden" name="userId" id="userId">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+				</form>
+				
 			</div>
 			
 			

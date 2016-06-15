@@ -6,7 +6,7 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
  
-	<http auto-config="true">
+	<http>
 		<intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
 		<intercept-url pattern="/createModifyRecipe" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/create_recipe" access="hasRole('ROLE_USER')" />
@@ -47,6 +47,7 @@
 		<beans:property name="username" value="root" />
 		<beans:property name="password" value="choos6" />
 	</beans:bean>
+	
 	<!-- Select users and user_roles from database -->
 	<authentication-manager>
 	  <authentication-provider>
@@ -57,6 +58,28 @@
 		    "select username, role from user_role where username =?  " />
 	  </authentication-provider>
 	</authentication-manager>
+	
+	<!--  
+	<beans:bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <beans:property name="packagesToScan">
+        <beans:list>
+            <beans:value>se.jjrecipes.entity</beans:value>
+
+        </beans:list>
+    </beans:property>
+    <beans:property name="hibernateProperties">
+        <beans:props>
+            <beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</beans:prop>
+            <beans:prop key="hibernate.show_sql">true</beans:prop>
+            <beans:prop key="hibernate.hbm2ddl.auto">update</beans:prop>
+        </beans:props>
+    </beans:property>
+
+    <beans:property name="dataSource" ref="dataSource" />
+</beans:bean>
+	
+	-->
+	
 	
 	 <beans:bean id="filterMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <beans:property name="maxUploadSize" value="1048576" />

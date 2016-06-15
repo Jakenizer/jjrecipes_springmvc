@@ -55,7 +55,6 @@
 				</ul>
 			</div>
 
-			<jsp:include page="bottomPanel.jsp" flush="true"/>
 		<form name="submitRecipe" action="recipe" method="post" id="submitRec">
 			<input type="hidden" name="id" id="idVal">
 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
