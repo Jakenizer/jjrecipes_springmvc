@@ -2,16 +2,11 @@ package se.jjrecipes.data;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 
-import se.jjrecipes.entity.Measuretype;
-import se.jjrecipes.entity.Recipe;
-import se.jjrecipes.entity.Tag;
 import se.jjrecipes.entity.User;
 import se.jjrecipes.hibernate.HibernateUtil;
 

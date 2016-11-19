@@ -43,7 +43,7 @@
 				
 				<div class="list-group" id="tagList">
 					<c:forEach var="tag" items="${tags}"> 
-					  <button type="button" class="list-group-item" data-tagid="${tag.id}">
+					  <button type="button" class="list-group-item" data-value="${tag.id}">
 					  	${tag.name} 
 					  	<span class="pull-right">
 					  		 <span class="glyphicon glyphicon-trash" id="deleteBtn_${tag.id}">

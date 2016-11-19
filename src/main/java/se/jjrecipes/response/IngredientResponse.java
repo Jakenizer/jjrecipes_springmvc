@@ -1,19 +1,14 @@
 package se.jjrecipes.response;
 
 import se.jjrecipes.entity.Ingredient;
-import se.jjrecipes.entity.Measuretype;
 
 public class IngredientResponse {
 	private Long id;
-	private String name;
-	private int amount;
-	private Measuretype measureType;
+	private String content;
 	
 	public IngredientResponse(Ingredient ir) {
 		this.setId(ir.getId());
-		this.name = ir.getName();
-		this.amount = ir.getAmount();
-		this.measureType = ir.getMeasuretype();
+		this.setContent(ir.getContent());
 	}
 
 	public Long getId() {
@@ -24,23 +19,11 @@ public class IngredientResponse {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public int getAmount() {
-		return amount;
-	}
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
-	public Measuretype getMeasureType() {
-		return measureType;
-	}
-	public void setMeasureType(Measuretype measureType) {
-		this.measureType = measureType;
+	public String getContent() {
+		return content;
 	}
 
+	public void setContent(String content) {
+		this.content = content;
+	}
 }

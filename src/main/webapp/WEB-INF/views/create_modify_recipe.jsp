@@ -19,8 +19,8 @@
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
-
 <link href="<c:url value="/resources/css/create_modify_recipe.css" />" rel="stylesheet">
+
 
 
 <title>JJRecipes create modify recipe</title>
@@ -29,24 +29,15 @@ $(document).ready(function(){
    setActiveNav("#nav_createrecipe");
 	
     $('#addIngredient').click(function() {		
-       var name = $('#newIngredient').val();
+       var content = $('#newIngredient').val();
        var amount = $('#amount').val();
        var type = $('#selectMeasureType option:selected').text();
        var typeId = $('#selectMeasureType').val();
        var json = {};
-       json['name'] = name;
-       var text = name; 
-       var val = name;
-       if (amount) {
-    	   json['amount'] = amount;
-    	   text += " " + amount;
-    	   if (type) {
-    		   json['measureType'] = typeId;
-    		   text += " " + type;
-    		}
-       }
+       json['content'] = content;
+       var stringed = JSON.stringify(json);
     	 
-       $('#ingredientList').append('<li><input type="checkbox" name="ingredients" value=' + JSON.stringify(json) + ' checked>' + text + '</li>');
+       $('#ingredientList').append("<li><input type='checkbox' name='ingredients' value='" + stringed + "' checked>" + content + "</li>");
     });
     
     $('#selectTagBtn').click(function() {
@@ -77,20 +68,12 @@ function fixAndSave() {
 			Namn:<br><input name="name" required="required" maxlength="50" value="${recipeData.name}"/><span class="fieldError">${name_error }</span><br><br>
 			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1001">${recipeData.content}</textarea><br><span class="fieldError">${content_error }</span><br><br>
 			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>
-			<div class="ingredientGroup" style="width:180px">Mängd:<br><input type="number" name="amount" value="0" step="1" min="0" id="amount"></div>
-			<div class="ingredientGroup">Mått:<br>
-			<select id="selectMeasureType" name="selectMeasureType">
- 			   <c:forEach var="item" items="${measuretypes}"> 
-  			      <option value="${item.id}">${item.name}</option>
- 			   </c:forEach>
-			</select>
-			</div>
 			<br>
 			<button type='button' id="addIngredient">Lägg till</button><br>
 			<div>
 				<ul id="ingredientList">
 					<c:forEach items="${recipeData.ingredients}" var="ingredient">
-						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.name} ${ingredient.amount} ${ingredient.measureType.name}</li>
+						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.content}</li>
 					</c:forEach>
 				</ul>
 		  </div>

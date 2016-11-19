@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,9 +19,8 @@ import org.hibernate.HibernateException;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,19 +35,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import se.jjrecipes.dao.RecipeDao;
+import se.jjrecipes.dao.TagDao;
 import se.jjrecipes.data.IngredientData;
-import se.jjrecipes.data.MeasuretypeData;
-import se.jjrecipes.data.RecipeData;
-import se.jjrecipes.data.TagData;
-import se.jjrecipes.data.UserData;
-import se.jjrecipes.data.UserRoleData;
 import se.jjrecipes.entity.Ingredient;
-//import se.jjrecipes.entity.Ingredient.MeasureType;
-import se.jjrecipes.entity.Measuretype;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
-import se.jjrecipes.entity.User;
-import se.jjrecipes.entity.UserRole;
 import se.jjrecipes.exception.ImageException;
 import se.jjrecipes.exception.JJRuntimeException;
 import se.jjrecipes.form.RecipeForm;
@@ -65,26 +56,12 @@ import com.google.common.collect.Sets;
 @Controller
 public class RecipeController {
 	private static Logger logger = LoggerFactory.getLogger(RecipeController.class); //slf4j logger
-
-	/*
-	@RequestMapping(value = "/initMeasuretypes", method = RequestMethod.GET)
-	public String initMeasuretypes(Model model) {
-//		MeasuretypeData.add("gram", "g");
-//		MeasuretypeData.add("milligram", "mg");
-//		MeasuretypeData.add("kilo", "kg");
-//		MeasuretypeData.add("milliliter", "ml");
-//		MeasuretypeData.add("centiliter", "cl");
-//		MeasuretypeData.add("deciliter", "dl");
-//		MeasuretypeData.add("liter", "l");
-//		MeasuretypeData.add("kryddmått", "krm");
-//		MeasuretypeData.add("tesked", "tsk");
-//		MeasuretypeData.add("matsked", "msk");
-//		MeasuretypeData.add("stycken", "st");
-//		
-		model.addAttribute("ok", "ok");
-		return "init_measuretypes";
-	}
-*/
+	
+	@Autowired
+	private RecipeDao recipeDao;
+	
+	@Autowired
+	private TagDao tagDao;
 	/*
 	@RequestMapping(value = "/initUsers", method = RequestMethod.GET)
 	public String initUsersAndRoles(Model model) {
@@ -123,7 +100,7 @@ public class RecipeController {
 		logger.info("User with name: '" + loggedin + "' accessed default link");
 		ModelAndView mv;
 		if (auth.getPrincipal() == "anonymousUser")
-			mv = new ModelAndView("login");
+			mv = new ModelAndView("loginx");
 		else
 			mv = new ModelAndView("home");
 		return mv;
@@ -164,7 +141,8 @@ public class RecipeController {
 
 	@RequestMapping(value = "/list_and_search", method = RequestMethod.GET)
 	public ModelAndView listAndSearch() {
-		Set<Recipe> recipes = RecipeData.sortedList();
+		//Set<Recipe> recipes = RecipeData.sortedList();
+		List<Recipe> recipes = recipeDao.listRecipes();
 		ModelAndView mv = new ModelAndView("list_and_search");
 		mv.addObject("recipes", recipes);
 		return mv;
@@ -174,7 +152,7 @@ public class RecipeController {
 	@RequestMapping(value = "/searchRecipe", method = RequestMethod.POST)
 	public ModelAndView search(@RequestParam("inputText") String text) {
 		ModelAndView mv = new ModelAndView("list_and_search");
-		List<Recipe> recipes = RecipeData.findRecipes(text);
+		List<Recipe> recipes = recipeDao.findRecipes(text);
 		mv.addObject("recipes", recipes);
 		return mv;
 	}
@@ -197,7 +175,7 @@ public class RecipeController {
 			if (form.getId() == null) {
 				recipe = createNewRecipe(form);
 			} else {
-				//TODO: Kolla att ändringar har skett, annars uppdatera ej
+				//TODO: Kolla att �ndringar har skett, annars uppdatera ej
 				recipe = updateRecipe(form);
 			}
     		mv.setViewName("redirect:recipe?id="+recipe.getId());
@@ -214,25 +192,21 @@ public class RecipeController {
 	@RequestMapping(value="/modify_recipe", method=RequestMethod.GET)
 	public  ModelAndView getModify(@RequestParam(value = "recipeID", required = true) long id) {
 		ModelAndView mv = new ModelAndView("create_modify_recipe");
-		Recipe recipe = RecipeData.get(Recipe.class, id);
+		Recipe recipe = recipeDao.getRecipe(id);
 		RecipeResponse recipeData = new RecipeResponse(recipe);
 		mv.addObject("recipeData", recipeData);
 		
-		TreeSet<Tag> tags = TagData.getSortedList();
-		List<Measuretype> typeList = MeasuretypeData.all();
+		TreeSet<Tag> tags = tagDao.getSortedList();
 		mv.addObject("tags", tags);
-		mv.addObject("measuretypes", typeList);
 		return mv;
 	}
 	
 	@RequestMapping("/create_recipe")
 	public ModelAndView getCreateRecipe() {
-		TreeSet<Tag> tags = TagData.getSortedList();
-		List<Measuretype> typeList = MeasuretypeData.all();
+		TreeSet<Tag> tags = tagDao.getSortedList();
 
 		ModelAndView mv = new ModelAndView("create_modify_recipe");
 		mv.addObject("tags", tags);
-		mv.addObject("measuretypes", typeList);
 		return mv;
 	}
 	
@@ -240,7 +214,9 @@ public class RecipeController {
 	public ModelAndView getRecipe(@RequestParam("id") Long id){
 		ModelAndView mv = new ModelAndView("view_recipe");
 		
-		Recipe recipe = RecipeData.get(Recipe.class, id);
+		Recipe recipe = recipeDao.getRecipe(id);
+		
+		//Recipe recipe = RecipeData.get(Recipe.class, id);
 		
 		//TODO: hantera alla fel. nullpointers och filinläsningsfel
 		RecipeResponse resp = new RecipeResponse(recipe);
@@ -338,9 +314,7 @@ public class RecipeController {
 		List<IngredientFromJSON> ingredients = Lists.transform(Arrays.asList(form.getIngredients()), Functions.jsonToJava);
 		for (IngredientFromJSON jin : ingredients) {
 			Ingredient in = new Ingredient();
-			in.setName(jin.getName());
-			in.setAmount(jin.getAmount());
-			in.setMeasuretype(MeasuretypeData.get(Long.valueOf(jin.getMeasureType())));
+			in.setContent(jin.getContent());
 			in.setRecipe(recipe);
 			ins.add(in);
 		}
@@ -350,19 +324,19 @@ public class RecipeController {
 		//create or get Tags and add
 		Set<Tag> taggers = new HashSet<Tag>();
 		for (String in : tags) {
-			Tag aTag = TagData.get(Tag.class, Long.valueOf(in));
+			Tag aTag = tagDao.getTag(Long.valueOf(in));
 			if (aTag == null) {
-				aTag = TagData.addTag(in);
+				aTag = tagDao.addTag(in);
 			} 
 			taggers.add(aTag);
 		}
 		recipe.setTags(taggers);
 
-		return RecipeData.addRecipe(recipe);
+		return recipeDao.add(recipe);
 	}
 	
 	private Recipe updateRecipe(RecipeForm form) {
-		Recipe recipe = RecipeData.get(Recipe.class, form.getId());
+		Recipe recipe = recipeDao.getRecipe(form.getId());
 		if (recipe == null) throw new IllegalArgumentException("Recipe with Id " + form.getId() + " not found.");
 			
 		recipe.setName(form.getName());
@@ -387,9 +361,7 @@ public class RecipeController {
 					in = IngredientData.get(Ingredient.class, jing.getId());
 					staying.add(in);
 				} else {
-					in.setName(jing.getName());
-					in.setAmount(jing.getAmount());
-					in.setMeasuretype(MeasuretypeData.get(jing.getMeasureType()));
+					in.setContent(jing.getContent());
 				}
 				in.setRecipe(recipe);
 				ins.add(in);
@@ -398,7 +370,7 @@ public class RecipeController {
 			recipe.setIngredients(ins);
 		}
 		
-		Recipe updatedRecipe = RecipeData.updateRecipe(recipe);
+		Recipe updatedRecipe = recipeDao.updateRecipe(recipe);//RecipeData.updateRecipe(recipe);
 		return updatedRecipe;
 	}
 	

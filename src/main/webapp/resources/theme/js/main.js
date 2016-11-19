@@ -19,7 +19,8 @@ function searchByTags() {
 	var selectedTags = $('.active.list-group-item');
 	var vals = [];
 	$.each(selectedTags, function(i, tag) {
-		vals.push(tag.innerText);
+		vals.push($(this).attr('data-value'));
+		//vals.push(tag.innerText);
 	});
 	
 	document.tagForm.selectedValues.value = vals;

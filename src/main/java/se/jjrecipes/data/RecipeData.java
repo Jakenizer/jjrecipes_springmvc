@@ -43,6 +43,9 @@ public class RecipeData extends AbstractData{
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
+
+		
+		
 		//find all recipes that are tagged with at least the tags in the tagsIds list.
 		String hql = "select r from Recipe r " +
                 "join r.tags t " +

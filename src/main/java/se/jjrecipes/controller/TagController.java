@@ -1,12 +1,13 @@
 package se.jjrecipes.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,24 +19,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import se.jjrecipes.data.RecipeData;
-import se.jjrecipes.data.TagData;
+import se.jjrecipes.dao.RecipeDao;
+import se.jjrecipes.dao.TagDao;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
 import se.jjrecipes.form.TagForm;
-import se.jjrecipes.function.Functions;
 import se.jjrecipes.util.GeneralUtil;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class TagController {
 	private static Logger logger = LoggerFactory.getLogger(TagController.class); //slf4j logger
 
+	@Autowired
+	private TagDao tagDao;
+	
+	@Autowired
+	private RecipeDao recipeDao;
+	
 	@ModelAttribute
 	public void alwaysAdd(Model model) {
 		model.addAttribute("isAdmin", GeneralUtil.isAdmin());
@@ -43,7 +43,7 @@ public class TagController {
 	
 	@RequestMapping("/tags") 
 	public ModelAndView tags() {
-		TreeSet<Tag> tags = TagData.getSortedList();
+		TreeSet<Tag> tags = tagDao.getSortedList();
 		ModelAndView mv = new ModelAndView("tags");
 		mv.addObject("tags", tags);
 		logger.info("READING TAGS");
@@ -57,18 +57,18 @@ public class TagController {
 			FieldError fieldError = result.getFieldError();
 			redirectAttrs.addFlashAttribute("error", fieldError.getDefaultMessage());
 		} else {
-			TagData.addTag(form.getNewTag());
+			tagDao.addTag(form.getNewTag());
 		}
 
 		return mv;
 	}
 	
 	@RequestMapping("/searchTag")
-	public ModelAndView searchByTags(@RequestParam("selectedValues") String[] selectedValues) {
-		List<Tag> tagsByNames = TagData.getTagsByNames(Arrays.asList(selectedValues));
-		Iterable<Long> tagIds = Iterables.transform(tagsByNames, Functions.tagToIds);
-		ArrayList<Long> arrayList = Lists.newArrayList(tagIds);
-		List<Recipe> recipes = RecipeData.findRecipesByTags(arrayList);
+	public ModelAndView searchByTags(@RequestParam("selectedValues") List<Long> selectedValues) {
+		/*List<Tag> tagsByIds = tagDao.getTagsByIds(selectedValues);
+		Iterable<Long> tagIds = Iterables.transform(tagsByIds, Functions.tagToIds);
+		ArrayList<Long> arrayList = Lists.newArrayList(tagIds);*/
+		List<Recipe> recipes = recipeDao.findRecipesByTags(selectedValues);
 		ModelAndView mv = new ModelAndView("list_and_search");
 		mv.addObject("recipes", recipes);
 		return mv;
@@ -76,7 +76,7 @@ public class TagController {
 	
 	@RequestMapping(value="/removeTag", method = RequestMethod.POST)
 	public ModelAndView removeTag(@RequestParam("tagId") long id) {
-		TagData.deleteById(id);
+		tagDao.delete(id);
 		return new ModelAndView("redirect:tags");
 	}
 }

@@ -42,7 +42,7 @@ public class AdminController {
 
 	    if (!GeneralUtil.isAdmin()) {
 	    	mv.setViewName("error");
-        	mv.addObject("message", "You are unauthorized to view this page.");
+        	mv.addObject("message", "Du saknar behörighet till denna sida.");
         	mv.addObject("returnpage", "list_and_search");
 	    }
 	    
@@ -57,7 +57,7 @@ public class AdminController {
 	    if (!GeneralUtil.isAdmin()) {
 	    	ModelAndView mv = new ModelAndView();
 	    	mv.setViewName("error");
-        	mv.addObject("message", "You are unauthorized to view this page.");
+        	mv.addObject("message", "Du saknar behörighet till denna funktion.");
         	mv.addObject("returnpage", "list_and_search");
         	return mv;
 	    }

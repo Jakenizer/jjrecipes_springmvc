@@ -20,7 +20,7 @@ public class IngredientValidationDoer extends AbstractValidationDoer {
 				return false;
 			} else if (JSONConverter.isConvertable(obj)){
 				pojo = JSONConverter.toIngredientPojo(obj);
-				if (pojo == null || StringUtils.isBlank(pojo.getName())) {
+				if (pojo == null || StringUtils.isBlank(pojo.getContent())) {
 					return false;
 				}
 			}

@@ -48,9 +48,9 @@
 		</form>
 			 
 			<div id="leftDiv" class="cont">
-				<ul>
+				<ul class="list-group">
 					<c:forEach var="item" items="${recipes}"> 
-						<li class="listElement"><div class="listAnchor" id="${item.id}">${item.name}</div></li>
+						<li class="list-group-item list-group-item-info"><div class="listAnchor" id="${item.id}">${item.name}</div></li>
 	 			   </c:forEach>
 				</ul>
 			</div>

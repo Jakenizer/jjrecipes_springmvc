@@ -24,14 +24,16 @@
 <title>JJRecipes</title>
 </head>
 <body>
-	<div class="container">
 		<jsp:include page="topPanel.jsp" flush="true"/>
+
+	<div class="container main-container">
 		<div class="bigBox">
 			<div id="headerDiv">
 				<h1>${responseData.name}</h1>
 				<form action="modify_recipe" method="get">				
 					<input type="hidden" name="recipeID" value="${responseData.id}">
-					<input type="image" src="resources/image/edit-icon.png">
+					<!-- <input type="image" src="resources/image/edit-icon.png"> -->
+					<button type="button" class="btn btn-default" onclick="javascript:this.parentNode.submit();"><span class="glyphicon glyphicon-edit"></span></button>
 				</form>
 			</div>
     		<div class="col-lg-7">
@@ -44,7 +46,7 @@
 		      		<c:if test="${not empty responseData.tags}">
 		      			<ul class="list-group">
 		      			<c:forEach items="${responseData.tags}" var="tag">
-		      				<li class="list-group-item">${tag.name}</li>
+		      				<li class="list-group-item list-group-item-warning">${tag.name}</li>
 		      			</c:forEach>
 		      			</ul>		
 		      		</c:if>
@@ -59,7 +61,7 @@
       			<c:if test="${not empty responseData.tags}">
 		      		<ul class="list-group">
 	      			<c:forEach items="${responseData.ingredients}" var="ing">
-	      				<li class="list-group-item">${ing.name}</li>
+	      				<li class="list-group-item list-group-item-success">${ing.content}</li>
 	      			</c:forEach>
 	      			</ul>		
       			</c:if>

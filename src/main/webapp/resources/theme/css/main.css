@@ -1,4 +1,4 @@
-
+/*
 .bigBox {
 	height: 800px;
 	background-color: #eee;
@@ -20,4 +20,16 @@ h1 {
 
 .pointercursor {
 	cursor: pointer;
+}*/
+
+body {
+	background-color: #eee;
+}
+
+.navbar-default {
+	background:  hsla(108, 92%, 71%, 1);
+}
+
+.main-container {
+	background-color: #FFF;
 }
