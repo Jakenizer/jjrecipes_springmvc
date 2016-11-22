@@ -3,10 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-4.0.xsd
-	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	http://www.springframework.org/schema/security/spring-security.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+ 
  
 	<http>
 		<intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
@@ -41,14 +42,7 @@
 	</authentication-manager>
  -->	
  
- 	<beans:bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
-		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<beans:property name="url" value="jdbc:mysql://localhost:3306/jjrecipes" />
-		<beans:property name="username" value="root" />
-		<beans:property name="password" value="choos6" />
-	</beans:bean>
 	
 	<!-- Select users and user_roles from database -->
 	<authentication-manager>
@@ -61,23 +55,22 @@
 	  </authentication-provider>
 	</authentication-manager>
 	
-	<beans:bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-	        <beans:property name="dataSource" ref="dataSource" />
-	        <beans:property name="packagesToScan" value="se.jjrecipes.entity" />
-	        <beans:property name="jpaVendorAdapter">
-	            <beans:bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-	        </beans:property>
-	        
-	  </beans:bean>
+
+	 <beans:bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<beans:property name="url" value="jdbc:mysql://localhost:3306/jjrecipes" />
+		<beans:property name="username" value="root" />
+		<beans:property name="password" value="choos6" />
+	</beans:bean>
+    
+    	
 	
-	
-	 <beans:bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <beans:property name="entityManagerFactory" ref="entityManagerFactory" />
-    </beans:bean>
+
     
 	 <beans:bean id="filterMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <beans:property name="maxUploadSize" value="1048576" />
     </beans:bean>
-     <tx:annotation-driven />
  
 </beans:beans>

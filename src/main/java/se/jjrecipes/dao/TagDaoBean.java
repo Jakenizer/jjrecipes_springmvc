@@ -16,7 +16,6 @@ import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
 
 @Repository
-@Transactional
 public class TagDaoBean extends AbstractDaoBean implements TagDao {
 
 	@PersistenceContext
@@ -37,7 +36,7 @@ public class TagDaoBean extends AbstractDaoBean implements TagDao {
 	public TreeSet<Tag> getSortedList() {
 		return new TreeSet<Tag>(listTags());
 	}
-	
+
 	@Override
 	public Tag addTag(String tagName) {
 		Tag t = new Tag(tagName);

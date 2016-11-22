@@ -4,23 +4,25 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 import se.jjrecipes.entity.BaseEntity;
 import se.jjrecipes.hibernate.HibernateUtil;
 
+@Transactional
 public class AbstractDaoBean {
-	
+
 	@PersistenceContext
-    private EntityManager manager;
-	
+	private EntityManager manager;
+
 	@SuppressWarnings("unchecked")
 	public <T> T get(Class<? extends BaseEntity> clazz, Long id) {
 		return (T) manager.find(clazz, id);
 	}
-	
+
 	public <T> boolean deleteById(Class<? extends BaseEntity> clazz, Long id) {
 		T e = get(clazz, id);
-		if (e != null) { 
+		if (e != null) {
 			manager.remove(e);
 			return true;
 		} else {

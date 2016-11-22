@@ -8,15 +8,18 @@
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password">choos6</property>
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jjrecipes</property>
-		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>		
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>	
+		<property name="hibernate.id.new_generator_mappings">false</property>	
 		<property name="show_sql">true</property>
 		
 		<mapping class="se.jjrecipes.entity.User"></mapping>
 		<mapping class="se.jjrecipes.entity.Recipe"></mapping>
 		<mapping class="se.jjrecipes.entity.Ingredient"></mapping>
-		<mapping class="se.jjrecipes.entity.Favourite"></mapping>
 		<mapping class="se.jjrecipes.entity.Tag"></mapping>
 		<mapping class="se.jjrecipes.entity.UserRole"></mapping>
+		
+	
+		
 	</session-factory>
 	
 

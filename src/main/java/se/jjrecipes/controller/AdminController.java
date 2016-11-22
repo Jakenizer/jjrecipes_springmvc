@@ -1,16 +1,12 @@
 package se.jjrecipes.controller;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,17 +15,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import se.jjrecipes.dao.UserDao;
+import se.jjrecipes.dao.UserRoleDao;
 import se.jjrecipes.data.UserData;
 import se.jjrecipes.data.UserRoleData;
 import se.jjrecipes.entity.User;
 import se.jjrecipes.entity.UserRole;
 import se.jjrecipes.form.UserForm;
+import se.jjrecipes.service.AdminService;
 import se.jjrecipes.util.GeneralUtil;
 
 @Controller
 public class AdminController {
 	private static Logger logger = LoggerFactory.getLogger(AdminController.class); //slf4j logger
 	
+	@Autowired
+	private UserDao userDao;
+	
+	@Autowired
+	private UserRoleDao userRoleDao;
+	
+	@Autowired
+	private AdminService adminService;
 	
 	@ModelAttribute
 	public void alwaysAdd(Model model) {
@@ -46,7 +53,7 @@ public class AdminController {
         	mv.addObject("returnpage", "list_and_search");
 	    }
 	    
-		List<User> users = UserData.listUsers();
+		List<User> users = userDao.listUsers();
 		mv.addObject("users", users);
 		return mv;
  
@@ -62,25 +69,15 @@ public class AdminController {
         	return mv;
 	    }
 		
-		User u1 = new User();
-		u1.setFirstname(form.getFirstname());
-		u1.setLastname(form.getLastname());
-		u1.setUsername(form.getUsername());
-		u1.setPassword(form.getPassword());
-		u1.setEnabled(form.getIsenabled());
-		UserData.addUser(u1);
+		User user = new User();
+		user.setFirstname(form.getFirstname());
+		user.setLastname(form.getLastname());
+		user.setUsername(form.getUsername());
+		user.setPassword(form.getPassword());
+		user.setEnabled(form.getIsenabled());
 		
-		UserRole ur = new UserRole();
-		ur.setRole("ROLE_USER");
-		ur.setUsername(form.getUsername());
-		UserRoleData.addUserRole(ur);
+		adminService.createUser(user, form.isAdmin());
 		
-		if (form.isAdmin()) {
-			UserRole ur2 = new UserRole();
-			ur2.setRole("ROLE_ADMINISTRATOR");
-			ur2.setUsername(form.getUsername());
-			UserRoleData.addUserRole(ur2);
-		}
 		
 		ModelAndView mv = new ModelAndView("redirect:admin");
 		
@@ -98,7 +95,8 @@ public class AdminController {
 	@RequestMapping(value = "/deleteuser", method = RequestMethod.POST)
 	public ModelAndView deleteuser(@RequestParam(value = "userId", required = true) Long userId) {
 		ModelAndView mv = new ModelAndView("admin/admin");
-		boolean success = UserData.deleteById(User.class, userId);
+		User user = userDao.get(userId);
+		boolean success = userDao.delete(user);
 		if (!success) {
         	mv.addObject("message", "Error while deleting user.");
         	mv.addObject("returnpage", "admin");

@@ -20,7 +20,6 @@ import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.hibernate.HibernateUtil;
 
 @Repository
-@Transactional
 public class RecipeDaoBean extends AbstractDaoBean implements RecipeDao {
 
 	@PersistenceContext
