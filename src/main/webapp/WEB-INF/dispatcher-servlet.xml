@@ -14,7 +14,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
  
  
  
-	<context:component-scan base-package="se.jjrecipes.controller, se.jjrecipes.dao" />
+	<context:component-scan base-package="se.jjrecipes.controller, se.jjrecipes.dao, se.jjrecipes.service" />
  
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
