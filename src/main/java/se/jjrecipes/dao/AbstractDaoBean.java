@@ -3,11 +3,9 @@ package se.jjrecipes.dao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.jjrecipes.entity.BaseEntity;
-import se.jjrecipes.hibernate.HibernateUtil;
 
 @Transactional
 public class AbstractDaoBean {

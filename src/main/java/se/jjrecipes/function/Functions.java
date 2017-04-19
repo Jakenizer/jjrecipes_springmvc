@@ -2,6 +2,7 @@ package se.jjrecipes.function;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import se.jjrecipes.dao.TagDaoBean;
 import se.jjrecipes.data.TagData;
 import se.jjrecipes.entity.Tag;
 import se.jjrecipes.util.IngredientFromJSON;
@@ -20,7 +21,7 @@ public class Functions {
 	public static Function<Long, Tag> idsToTags = new Function<Long, Tag>() {
 		@Override
 		public Tag apply(Long id) {
-			return TagData.get(Tag.class, id);
+			return (new TagDaoBean()).get(Tag.class, id);
 		}
 	};
 	

@@ -35,30 +35,67 @@
 <title>JJRecipes list and search</title>
 </head>
 <body>
+	<jsp:include page="topPanel.jsp" flush="true"/>
+
 <div class="container">
 
-	<jsp:include page="topPanel.jsp" flush="true"/>
+	<form action="/JJRecipes/user/searchRecipe" method="post">
+		<div class="row">
+	        <div class="col-sm-4">
+	            <div class="input-group stylish-input-group">
+	                   <input name="inputText" type="text" class="form-control" placeholder="Search" >
+	                   <span class="input-group-addon">
+	                       <button type="submit">
+	                           <span class="glyphicon glyphicon-search"></span>
+	                       </button>  
+	                   </span>
+	             </div>
+	        </div>
+		</div>
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	</form>
+
+	<div class="row">
+		<div class="col-lg-6">
+			<ul class="list-group">
+					<c:forEach var="item" items="${row1}"> 
+						<li class="list-group-item list-group-item-info"><a class="listAnchor" href="/JJRecipes/recipe?id=${item.id}">${item.name}</a></li>
+	 			   </c:forEach>	   
+				</ul>
+		</div>
+
+		<div class="col-lg-6">
+			<ul class="list-group">
+					<c:forEach var="item" items="${row2}"> 
+						<li class="list-group-item list-group-item-info"><a class="listAnchor" href="/JJRecipes/recipe?id=${item.id}">${item.name}</a></li>
+	 			   </c:forEach>
+				</ul>
+		</div>
+	</div>
+	
+	<ul class="pagination">
+		<c:forEach var="i" begin="1" end="${paginationSize}">
+	  		<li><a href="/JJRecipes/user/list_and_search/${i}">${i}</a></li>
+	  </c:forEach>
+	</ul>
+	
+
 	<div id="bigBox">
-		<form action="searchRecipe" method="post">
+		<!-- <form action="searchRecipe" method="post">
 			<div class="searchCont">
 				<input class="lefter" type="text" name="inputText">
 				<input class="lefter" type="submit" value="Sök">
 			</div>
 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		</form>
-			 
-			<div id="leftDiv" class="cont">
+			<div>
 				<ul class="list-group">
 					<c:forEach var="item" items="${recipes}"> 
-						<li class="list-group-item list-group-item-info"><div class="listAnchor" id="${item.id}">${item.name}</div></li>
+						<li class="list-group-item list-group-item-info"><a class="listAnchor" href="/JJRecipes/recipe/${item.id}">${item.name}</a></li>
 	 			   </c:forEach>
 				</ul>
-			</div>
-
-		<form name="submitRecipe" action="recipe" method="post" id="submitRec">
-			<input type="hidden" name="id" id="idVal">
-			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		</form>
+			</div>			  -->
+			
 	</div>
 </div>
 	

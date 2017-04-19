@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -38,8 +39,8 @@ public class UserDaoBean extends AbstractDaoBean implements UserDao {
 	}
 
 	@Override
-	public boolean delete(User user) {
-		return deleteById(User.class, user.getId());
+	public boolean delete(Long userId) {		
+		return deleteById(User.class, userId);
 	}
 
 	@Override

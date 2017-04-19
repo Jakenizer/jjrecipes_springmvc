@@ -45,7 +45,7 @@ public class AdminController {
 	
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public ModelAndView adminPage() {
-		ModelAndView mv = new ModelAndView("admin/admin");
+		ModelAndView mv = new ModelAndView("/admin/admin");
 
 	    if (!GeneralUtil.isAdmin()) {
 	    	mv.setViewName("error");
@@ -65,7 +65,7 @@ public class AdminController {
 	    	ModelAndView mv = new ModelAndView();
 	    	mv.setViewName("error");
         	mv.addObject("message", "Du saknar behörighet till denna funktion.");
-        	mv.addObject("returnpage", "list_and_search");
+        	mv.addObject("returnpage", "/user/list_and_search");
         	return mv;
 	    }
 		
@@ -94,15 +94,15 @@ public class AdminController {
 	
 	@RequestMapping(value = "/deleteuser", method = RequestMethod.POST)
 	public ModelAndView deleteuser(@RequestParam(value = "userId", required = true) Long userId) {
-		ModelAndView mv = new ModelAndView("admin/admin");
-		User user = userDao.get(userId);
-		boolean success = userDao.delete(user);
+		ModelAndView mv = new ModelAndView("redirect:admin");
+		boolean success = adminService.deleteUser(userDao.get(userId));
 		if (!success) {
         	mv.addObject("message", "Error while deleting user.");
         	mv.addObject("returnpage", "admin");
         	mv.addObject("exception", "");
-            mv.setViewName("error");
+            mv.setViewName("/user/error");
 		}
+		
     	return mv;
 	}
 	

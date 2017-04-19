@@ -15,18 +15,18 @@ public class RecipeForm {
 	private Long id;
 	
 	@NotNull
-	@Length(min = 3, max = 50, message = "Receptets namn must vara mellan 3 och 50 tecken langt.")
+	@Length(min = 3, max = 50, message = "Receptets namn måste vara mellan 3 och 50 tecken långt.")
 	private String name;
 	
-	@StringArrayInputFormat(message = "Fel format pa ingredienslistan.", classForValidation = IngredientValidationDoer.class)
+	@StringArrayInputFormat(message = "Fel format på ingredienslistan.", classForValidation = IngredientValidationDoer.class)
 	private String[] ingredient;
 	
-	@Length(max = 1000, message = "Beskrivningen far innehalla max 1000 tecken.")
+	@Length(max = 1000, message = "Beskrivningen får innehålla max 1000 tecken.")
 	private String content;
 	
 	private MultipartFile file;
 	
-	@StringArrayInputFormat(message = "Fel format pÃ¥ tag-listan.", classForValidation = TagValidationDoer.class)
+	@StringArrayInputFormat(message = "Fel format på tag-listan.", classForValidation = TagValidationDoer.class)
 	private String[] tags;
 	
 	

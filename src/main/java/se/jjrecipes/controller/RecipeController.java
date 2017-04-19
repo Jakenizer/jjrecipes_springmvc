@@ -2,24 +2,35 @@ package se.jjrecipes.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.validation.Valid;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.HibernateException;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -28,13 +39,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import se.jjrecipes.dao.IngredientDao;
 import se.jjrecipes.dao.RecipeDao;
 import se.jjrecipes.dao.TagDao;
 import se.jjrecipes.data.IngredientData;
@@ -48,6 +62,7 @@ import se.jjrecipes.function.Functions;
 import se.jjrecipes.response.RecipeResponse;
 import se.jjrecipes.util.GeneralUtil;
 import se.jjrecipes.util.IngredientFromJSON;
+import se.jjrecipes.util.JSONConverter;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -62,6 +77,22 @@ public class RecipeController {
 	
 	@Autowired
 	private TagDao tagDao;
+	
+	@Autowired
+	private IngredientDao ingredientDao;
+	
+	@RequestMapping(value = "/testRecipes", method = RequestMethod.GET)
+	public String initUsersAndRoles(Model model) {
+	/*	for (int i = 60; i < 90; i++) {
+			RecipeForm r = new RecipeForm();
+			r.setName("testRecept"+i);
+			r.setContent("testinnehåll"+i);
+			createNewRecipe(r);
+		}*/
+		
+		return "redirect:/user/list_and_search/1";
+	}
+	
 	/*
 	@RequestMapping(value = "/initUsers", method = RequestMethod.GET)
 	public String initUsersAndRoles(Model model) {
@@ -100,15 +131,15 @@ public class RecipeController {
 		logger.info("User with name: '" + loggedin + "' accessed default link");
 		ModelAndView mv;
 		if (auth.getPrincipal() == "anonymousUser")
-			mv = new ModelAndView("loginx");
+			mv = new ModelAndView("redirect:/user/loginx");
 		else
-			mv = new ModelAndView("home");
+			mv = new ModelAndView("/user/home");
 		return mv;
 	}
 	
 	@RequestMapping(value = "/loginx", method = RequestMethod.GET)
 	public ModelAndView login() {
-		ModelAndView mv = new ModelAndView("login");
+		ModelAndView mv = new ModelAndView("/user/login");
 
 		return mv;
 	}
@@ -137,27 +168,61 @@ public class RecipeController {
 		return mv;
 	}
  
+	@RequestMapping(value = "/testar", method = RequestMethod.GET)
+	public String testar() {
+		return "";
+	}
 
-
-	@RequestMapping(value = "/list_and_search", method = RequestMethod.GET)
-	public ModelAndView listAndSearch() {
+	@RequestMapping(value = "/user/list_and_search/{page}", method = RequestMethod.GET)
+	public ModelAndView listAndSearch(@PathVariable(required = false) int page) {
 		//Set<Recipe> recipes = RecipeData.sortedList();
-		List<Recipe> recipes = recipeDao.listRecipes();
-		ModelAndView mv = new ModelAndView("list_and_search");
-		mv.addObject("recipes", recipes);
+		final int pageSize = 30;
+		//List<Recipe> recipes = recipeDao.allRecipes();
+		
+		long count = recipeDao.countAll();
+				
+		int startPos = count <= pageSize ? 0 : (page - 1) * pageSize;
+		//int endPos = (int) (startPos + 30 > count ? count : startPos + 30);
+		
+		List<Recipe> recipes2 = recipeDao.paginatedRecipes(startPos, 30);
+		
+		//List<Recipe> paged = recipes.subList(startPos, endPos);
+		
+		int chop = (int)Math.ceil(recipes2.size() / 2d);
+		List<Recipe> row1 = recipes2.subList(0, chop);
+		List<Recipe> row2 = recipes2.subList(chop, recipes2.size());
+		
+		int paginationSize = (int)Math.ceil(count / 30d);
+		ModelAndView mv = new ModelAndView("/user/list_and_search");
+		mv.addObject("row1", row1);
+		mv.addObject("row2", row2);
+		mv.addObject("paginationSize", paginationSize);
 		return mv;
 	}
 	
 	
-	@RequestMapping(value = "/searchRecipe", method = RequestMethod.POST)
-	public ModelAndView search(@RequestParam("inputText") String text) {
-		ModelAndView mv = new ModelAndView("list_and_search");
-		List<Recipe> recipes = recipeDao.findRecipes(text);
-		mv.addObject("recipes", recipes);
+	@RequestMapping(value = "/user/searchRecipe", method = RequestMethod.POST)
+	public ModelAndView search(@RequestParam(name = "inputText", required = true) String text, 
+							   @RequestParam(name = "page", required  = false, defaultValue = "1") Integer page) {	
+		final int pageSize = 30;
+		long count = recipeDao.countAllSearched(text);
+		int startPos = count <= pageSize ? 0 : (page - 1) * pageSize;
+		
+		List<Recipe> recipes = recipeDao.paginatedSearch(text, startPos, pageSize);
+				
+		int chop = (int)Math.ceil(recipes.size() / 2d);
+		List<Recipe> row1 = recipes.subList(0, chop);
+		List<Recipe> row2 = recipes.subList(chop, recipes.size());
+		
+		int paginationSize = (int)Math.ceil(count / 30d);
+		ModelAndView mv = new ModelAndView("/user/list_and_search");
+		mv.addObject("row1", row1);
+		mv.addObject("row2", row2);
+		mv.addObject("paginationSize", paginationSize);
 		return mv;
 	}
 	
-	@RequestMapping(value="/createModifyRecipe", method=RequestMethod.POST)
+	@RequestMapping(value="/user/createModifyRecipe", method=RequestMethod.POST)
 	public  ModelAndView createModify(@Valid @ModelAttribute RecipeForm form, BindingResult result, RedirectAttributes redirectAttrs) {
 		ModelAndView mv = new ModelAndView();		
 		
@@ -166,7 +231,7 @@ public class RecipeController {
 			for (FieldError fe : fieldErrors) {
 				redirectAttrs.addFlashAttribute(fe.getField() + "_error", fe.getDefaultMessage());
 			}
-			mv.setViewName("redirect:create_recipe");
+			mv.setViewName("redirect:/user/create_recipe");
 			return mv;
 		}
 		
@@ -178,7 +243,7 @@ public class RecipeController {
 				//TODO: Kolla att Ändringar har skett, annars uppdatera ej
 				recipe = updateRecipe(form);
 			}
-    		mv.setViewName("redirect:recipe?id="+recipe.getId());
+    		mv.setViewName("redirect:/user/recipe?="+recipe.getId());
             return mv;
         } catch (HibernateException e) {
         	mv.addObject("message", "Error while saving recipe.");
@@ -189,9 +254,9 @@ public class RecipeController {
         }
     }
 	
-	@RequestMapping(value="/modify_recipe", method=RequestMethod.GET)
-	public  ModelAndView getModify(@RequestParam(value = "recipeID", required = true) long id) {
-		ModelAndView mv = new ModelAndView("create_modify_recipe");
+	@RequestMapping(value="/recipe/{id}/edit", method=RequestMethod.POST)
+	public  ModelAndView getModify(@PathVariable(required = true) long id) {
+		ModelAndView mv = new ModelAndView("/user/create_modify_recipe");
 		Recipe recipe = recipeDao.getRecipe(id);
 		RecipeResponse recipeData = new RecipeResponse(recipe);
 		mv.addObject("recipeData", recipeData);
@@ -201,18 +266,31 @@ public class RecipeController {
 		return mv;
 	}
 	
-	@RequestMapping("/create_recipe")
+	@RequestMapping("/user/create_recipe")
 	public ModelAndView getCreateRecipe() {
 		TreeSet<Tag> tags = tagDao.getSortedList();
 
-		ModelAndView mv = new ModelAndView("create_modify_recipe");
+		ModelAndView mv = new ModelAndView("/user/create_modify_recipe");
 		mv.addObject("tags", tags);
 		return mv;
 	}
 	
+	@RequestMapping("/user/create_recipe2")
+	public ModelAndView getCreateRecipeNew() {
+		TreeSet<Tag> tags = tagDao.getSortedList();
+
+		ModelAndView mv = new ModelAndView("/user/create_modify_recipe2");
+		mv.addObject("tags", tags);
+		return mv;
+	}
+	
+	/*
+	@RequestMapping(value = "/recipe/{id}", method={RequestMethod.GET})
+	public ModelAndView getRecipe(@PathVariable(required = true) Long id) {*/
 	@RequestMapping(value = "/recipe", method={RequestMethod.POST, RequestMethod.GET})
 	public ModelAndView getRecipe(@RequestParam("id") Long id){
-		ModelAndView mv = new ModelAndView("view_recipe");
+	
+		ModelAndView mv = new ModelAndView("/user/view_recipe");
 		
 		Recipe recipe = recipeDao.getRecipe(id);
 		
@@ -222,16 +300,16 @@ public class RecipeController {
 		RecipeResponse resp = new RecipeResponse(recipe);
 		if (resp.getImage() == null) {
 			URL resource = RecipeController.class.getClassLoader().getResource("image/recipe-default.jpg");
-			InputStream inStream;
+			InputStream inStream; 
 			try {
 				inStream = resource.openStream();
 				byte[] byteArray = IOUtils.toByteArray(inStream);
 				resp.setImage(byteArray);
-			} catch (IOException e) {
-				mv.addObject("message", "Fel vid hamtning av defaultbild till recept");
+			} catch (Exception e) {
+				mv.addObject("message", "Fel vid hämtning av defaultbild till recept");
 				mv.addObject("exception", e.getMessage());
 				mv.addObject("returnpage", "/JJRecipes/list_and_search");
-				mv.setViewName("error");
+				mv.setViewName("/user/error");
 				return mv;
 			} 
 		}
@@ -310,14 +388,15 @@ public class RecipeController {
 		recipe.setContent(content);
 		
 		
-		Set<Ingredient> ins = new HashSet<Ingredient>();
-		List<IngredientFromJSON> ingredients = Lists.transform(Arrays.asList(form.getIngredients()), Functions.jsonToJava);
-		for (IngredientFromJSON jin : ingredients) {
-			Ingredient in = new Ingredient();
-			in.setContent(jin.getContent());
-			in.setRecipe(recipe);
-			ins.add(in);
-		}
+		List<String> ing = new ArrayList<String>(Arrays.asList(form.getIngredients()));
+		List<IngredientFromJSON> ingredients = 
+			ing.stream()
+				.map(input -> stringToJson(input))
+				.collect(Collectors.toList());
+		
+		Set<Ingredient> ins = 
+			ingredients.stream()
+				.map(jing -> jsonToIngredient(jing, recipe)).collect(Collectors.toSet());
 
 		recipe.setIngredients(ins);
 
@@ -335,6 +414,23 @@ public class RecipeController {
 		return recipeDao.add(recipe);
 	}
 	
+	private Ingredient jsonToIngredient(IngredientFromJSON jing, Recipe r) {
+		Ingredient in = new Ingredient();
+		in.setContent(jing.getContent());
+		in.setRecipe(r);
+		return in;
+	}
+	
+	private IngredientFromJSON stringToJson(String input) {
+		IngredientFromJSON pojo = new IngredientFromJSON();
+		if (NumberUtils.isNumber(input)) {
+			pojo.setId(Long.valueOf(input));
+		} else {
+			pojo = JSONConverter.toIngredientPojo(input);
+		}
+		return pojo;
+	}
+	
 	private Recipe updateRecipe(RecipeForm form) {
 		Recipe recipe = recipeDao.getRecipe(form.getId());
 		if (recipe == null) throw new IllegalArgumentException("Recipe with Id " + form.getId() + " not found.");
@@ -345,9 +441,10 @@ public class RecipeController {
 		
 		//compare the collections tags and ingredients
 		List<String> newTagsIn = Arrays.asList(form.getTags());
-		Iterable<Long> longs = Iterables.transform(newTagsIn, Functions.stringsToLongs);
-		HashSet<Tag> InTags = Sets.newHashSet(Iterables.transform(longs, Functions.idsToTags));
-		recipe.setTags(InTags);
+		Set<Tag> inTags = newTagsIn.stream().map(in -> idToTag(in)).collect(Collectors.toSet());
+		//Iterable<Long> longs = Iterables.transform(newTagsIn, Functions.stringsToLongs);
+		//HashSet<Tag> InTags = Sets.newHashSet(Iterables.transform(longs, Functions.idsToTags));
+		recipe.setTags(inTags);
 
 		List<IngredientFromJSON> ingredients = Lists.transform(Arrays.asList(form.getIngredients()), Functions.jsonToJava);
 
@@ -358,7 +455,7 @@ public class RecipeController {
 				Ingredient in = new Ingredient();
 
 				if (jing.getId() != null) {
-					in = IngredientData.get(Ingredient.class, jing.getId());
+					in = ingredientDao.get(jing.getId());
 					staying.add(in);
 				} else {
 					in.setContent(jing.getContent());
@@ -370,15 +467,19 @@ public class RecipeController {
 			recipe.setIngredients(ins);
 		}
 		
-		Recipe updatedRecipe = recipeDao.updateRecipe(recipe);//RecipeData.updateRecipe(recipe);
+		Recipe updatedRecipe = recipeDao.updateRecipe(recipe);
 		return updatedRecipe;
+	}
+	
+	private Tag idToTag(String id) {
+		return tagDao.getTag(Long.valueOf(id));
 	}
 	
 	private void removeOrphanedIngredients(Set<Ingredient> existing, Set<Ingredient> newSet) {
 		for (Ingredient ingredient : existing) {
 			if (!newSet.contains(ingredient)) {
 				ingredient.setRecipe(null);
-				IngredientData.deleteById(Ingredient.class, ingredient.getId());
+				ingredientDao.delete(ingredient.getId());
 			}
 		}
 	}

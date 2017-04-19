@@ -11,13 +11,9 @@ import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import se.jjrecipes.entity.Recipe;
-import se.jjrecipes.hibernate.HibernateUtil;
 
 @Repository
 public class RecipeDaoBean extends AbstractDaoBean implements RecipeDao {
@@ -37,16 +33,49 @@ public class RecipeDaoBean extends AbstractDaoBean implements RecipeDao {
 		return recipe;
 	}
 	
+	@Override
+	public long countAll() {
+		Query queryTotal = manager.createQuery
+			    ("Select count(r.id) from Recipe r");
+		
+		return (long)queryTotal.getSingleResult();
+	}
+	
+	@Override
+	public long countAllSearched(String searchString) {
+		Query queryTotal = manager.createQuery
+			    ("Select count(r.id) from Recipe r WHERE r.name LIKE CONCAT"
+				+ "('%','" + searchString + "', '%'))");
+		
+		return (long)queryTotal.getSingleResult();
+	}
+	
+	@Override
+	public List<Recipe> paginatedRecipes(int startIndex, int pageSize) {
+		return manager.createQuery("From Recipe", Recipe.class)
+				.setFirstResult(startIndex)
+				.setMaxResults(pageSize)
+				.getResultList();
+	}
+	
+	@Override
+	public List<Recipe> paginatedSearch(String searchString, int startIndex, int pageSize) {
+		return manager.createQuery("From Recipe re where re.name LIKE CONCAT"
+				+ "('%','" + searchString + "', '%'))", Recipe.class)
+				.setFirstResult(startIndex)
+				.setMaxResults(pageSize)
+				.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Recipe> listRecipes() {
+	public List<Recipe> allRecipes() {
 		Query query = manager.createQuery("From Recipe");
 		return query.getResultList();
 	}
 	
 	public Set<Recipe> sortedList() {
-		return new TreeSet<Recipe>(listRecipes());
+		return new TreeSet<Recipe>(allRecipes());
 	}
 
 	@Override
@@ -57,7 +86,7 @@ public class RecipeDaoBean extends AbstractDaoBean implements RecipeDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Recipe> findRecipes(String searchString) {
-		Query q = manager.createQuery("From Recipe re where re.name LIKE CONCAT('%'," + searchString + ", '%'))");
+		Query q = manager.createQuery("From Recipe re where re.name LIKE CONCAT('%','" + searchString + "', '%'))");
 		return q.getResultList();
 	}
 

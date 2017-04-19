@@ -1,7 +1,10 @@
 package se.jjrecipes.service;
 
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import se.jjrecipes.dao.UserDao;
 import se.jjrecipes.dao.UserRoleDao;
@@ -38,9 +41,12 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
+	@Transactional
 	public boolean deleteUser(User user) {
-		// TODO Auto-generated method stub
-		return false;
+		if (!userRoleDao.deleteAllForUser(user))
+			return false;
+		
+		return userDao.delete(user.getId());
 	}
 
 	@Override

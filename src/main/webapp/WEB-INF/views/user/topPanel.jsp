@@ -17,9 +17,9 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-      	<li id="nav_listrecipes"><a href="/JJRecipes/list_and_search">Lista recept</a></li>
-      	<li id="nav_createrecipe"><a href="/JJRecipes/create_recipe">Skapa nytt recept</a></li>
-        <li id="nav_tags"><a href="/JJRecipes/tags">Taggar</a></li>
+      	<li id="nav_listrecipes"><a href="/JJRecipes/user/list_and_search/1">Lista recept</a></li>
+      	<li id="nav_createrecipe"><a href="/JJRecipes/user/create_recipe">Skapa nytt recept</a></li>
+        <li id="nav_tags"><a href="/JJRecipes/user/tags">Taggar</a></li>
         <c:if test="${isAdmin}">
         	<li><a href="/JJRecipes/admin">Admin</a></li>
         </c:if>

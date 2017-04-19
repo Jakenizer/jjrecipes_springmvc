@@ -8,7 +8,7 @@ public interface RecipeDao {
 	
 	Recipe getRecipe(Long id);
 	
-	public List<Recipe> listRecipes();
+	public List<Recipe> allRecipes();
 
 	Recipe updateRecipe(Recipe r);
 
@@ -17,5 +17,14 @@ public interface RecipeDao {
 	Recipe add(Recipe recipe);
 
 	List<Recipe> findRecipes(String searchString);
+
+	List<Recipe> paginatedRecipes(int startIndex, int pageSize);
+
+	long countAll();
+
+	List<Recipe> paginatedSearch(String searchString, int startIndex,
+			int pageSize);
+
+	long countAllSearched(String searchString);
 
 }

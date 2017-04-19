@@ -41,10 +41,10 @@ public class TagController {
 		model.addAttribute("isAdmin", GeneralUtil.isAdmin());
 	}
 	
-	@RequestMapping("/tags") 
+	@RequestMapping("/user/tags") 
 	public ModelAndView tags() {
 		TreeSet<Tag> tags = tagDao.getSortedList();
-		ModelAndView mv = new ModelAndView("tags");
+		ModelAndView mv = new ModelAndView("/user/tags");
 		mv.addObject("tags", tags);
 		logger.info("READING TAGS");
 		return mv;
@@ -52,7 +52,7 @@ public class TagController {
 
 	@RequestMapping("/nyTagg")
 	public ModelAndView newTag(@Valid TagForm form, BindingResult result, RedirectAttributes redirectAttrs) {
-		ModelAndView mv = new ModelAndView("redirect:tags");
+		ModelAndView mv = new ModelAndView("redirect:/user/tags");
 		if(result.hasErrors()) {
 			FieldError fieldError = result.getFieldError();
 			redirectAttrs.addFlashAttribute("error", fieldError.getDefaultMessage());
@@ -69,7 +69,7 @@ public class TagController {
 		Iterable<Long> tagIds = Iterables.transform(tagsByIds, Functions.tagToIds);
 		ArrayList<Long> arrayList = Lists.newArrayList(tagIds);*/
 		List<Recipe> recipes = recipeDao.findRecipesByTags(selectedValues);
-		ModelAndView mv = new ModelAndView("list_and_search");
+		ModelAndView mv = new ModelAndView("/user/list_and_search");
 		mv.addObject("recipes", recipes);
 		return mv;
 	}
@@ -77,6 +77,6 @@ public class TagController {
 	@RequestMapping(value="/removeTag", method = RequestMethod.POST)
 	public ModelAndView removeTag(@RequestParam("tagId") long id) {
 		tagDao.delete(id);
-		return new ModelAndView("redirect:tags");
+		return new ModelAndView("redirect:/user/tags");
 	}
 }

@@ -10,7 +10,7 @@
  
  
 	<http>
-		<intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
+		<!-- intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
 		<intercept-url pattern="/createModifyRecipe" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/create_recipe" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/list_and_search" access="hasRole('ROLE_USER')" />
@@ -18,32 +18,21 @@
 		<intercept-url pattern="/nyTagg" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/searchTag" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/removeTag" access="hasRole('ROLE_USER')" />
-		<intercept-url pattern="/recipe" access="hasRole('ROLE_USER')" />		
+		<intercept-url pattern="/recipe" access="hasRole('ROLE_USER')" /> -->
+		<intercept-url pattern="/user/**" access="hasRole('ROLE_USER')" />		
 		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMINISTRATOR')"/>
 		<!--  <logout logout-url="/logout" logout-success-url="/login" delete-cookies="JSESSIONID" /> -->
 		 
 		 
 		         <!-- Override default login and logout pages -->
         <form-login login-page="/loginx" 
-                             default-target-url="/list_and_search" 
+                             default-target-url="/user/list_and_search/1" 
                              authentication-failure-url="/loginfail"
                              always-use-default-target="true" />
                              
         <logout logout-url="/logout" logout-success-url="/loginx" />
 	</http>
  
-	<!-- <authentication-manager>
-	  <authentication-provider>
-	    <user-service>
-			<user name="jonina" password="tittadae15!" authorities="ROLE_USER" />
-			<user name="jacob" password="skruttrump!" authorities="ROLE_ADMINISTRATOR,ROLE_USER" />
-	    </user-service>
-	  </authentication-provider>
-	</authentication-manager>
- -->	
- 
-
-	
 	<!-- Select users and user_roles from database -->
 	<authentication-manager>
 	  <authentication-provider>

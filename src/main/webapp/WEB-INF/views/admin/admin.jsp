@@ -52,8 +52,9 @@ $(document).ready(function() {
 <title>JJRecipes Admin Page</title>
 </head>
 <body>
+		<jsp:include page="../user/topPanel.jsp" flush="true"/>
+
 	<div class="container">
-		<jsp:include page="../topPanel.jsp" flush="true"/>
 		<div id="bigBox">
 			<h1>Admin Page</h1>
 			
