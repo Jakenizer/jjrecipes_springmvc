@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import se.jjrecipes.entity.BaseEntity;
 import se.jjrecipes.hibernate.HibernateUtil;
 
+@Deprecated
 public class AbstractData {
 	
 	@SuppressWarnings("unchecked")
