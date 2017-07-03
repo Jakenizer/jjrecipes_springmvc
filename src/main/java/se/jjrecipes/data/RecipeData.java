@@ -15,6 +15,7 @@ import org.hibernate.Transaction;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.hibernate.HibernateUtil;
 
+@Deprecated
 public class RecipeData extends AbstractData{
 	
 	public static Recipe addRecipe(Recipe r) throws HibernateException {
