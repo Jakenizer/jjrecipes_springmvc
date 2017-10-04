@@ -2,27 +2,20 @@ package se.jjrecipes.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.validation.Valid;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.HibernateException;
@@ -30,7 +23,6 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -44,14 +36,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import se.jjrecipes.dao.IngredientDao;
 import se.jjrecipes.dao.RecipeDao;
 import se.jjrecipes.dao.TagDao;
-import se.jjrecipes.data.IngredientData;
 import se.jjrecipes.entity.Ingredient;
 import se.jjrecipes.entity.Recipe;
 import se.jjrecipes.entity.Tag;
@@ -64,9 +54,7 @@ import se.jjrecipes.util.GeneralUtil;
 import se.jjrecipes.util.IngredientFromJSON;
 import se.jjrecipes.util.JSONConverter;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
  
 @Controller
 public class RecipeController {
@@ -147,7 +135,7 @@ public class RecipeController {
 	@RequestMapping(value = "/loginfail", method = RequestMethod.GET)
 	public ModelAndView loginfailed() {
 		ModelAndView mv = new ModelAndView("login");
-		mv.addObject("error", "Fel anvandarnamn eller losenord");
+		mv.addObject("error", "Fel användarnamn eller lösenord");
 		/*String a = System.getenv("OPENSHIFT_MYSQL_DB_HOST");
 		String b = System.getenv("OPENSHIFT_MYSQL_DB_PORT");
 		String c = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
@@ -243,7 +231,7 @@ public class RecipeController {
 				//TODO: Kolla att Ändringar har skett, annars uppdatera ej
 				recipe = updateRecipe(form);
 			}
-    		mv.setViewName("redirect:/user/recipe?="+recipe.getId());
+    		mv.setViewName("redirect:/user/recipe?id="+recipe.getId());
             return mv;
         } catch (HibernateException e) {
         	mv.addObject("message", "Error while saving recipe.");

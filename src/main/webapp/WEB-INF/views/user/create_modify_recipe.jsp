@@ -21,7 +21,17 @@
 <link href="<c:url value="/resources/css/main.css" />" rel="stylesheet">
 <link href="<c:url value="/resources/css/create_modify_recipe.css" />" rel="stylesheet">
 
-
+<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
+<script type="text/javascript">
+bkLib.onDomLoaded(function() {
+    nicEditors.editors.push(
+            new nicEditor({buttonList: ['fontSize','bold', 'ol', 'ul']}).panelInstance(
+                document.getElementById('content')
+            )
+        );
+});
+</script>
+						
 
 <title>JJRecipes create modify recipe</title>
 <script type="text/javascript">
@@ -65,15 +75,15 @@ function fixAndSave() {
 
 	<div id="bigBox">
 		<form id="createRecipe" action="/JJRecipes/user/createModifyRecipe" method="post" enctype="multipart/form-data">
-			Namn:<br><input name="name" required="required" maxlength="50" value="${recipeData.name}"/><span class="fieldError">${name_error }</span><br><br>
-			Beskrivning:<br><textarea rows="25" cols="108" name="content" maxlength="1001">${recipeData.content}</textarea><br><span class="fieldError">${content_error }</span><br><br>
-			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input id="newIngredient"/></div>
+			Namn:<br><input class="form-control" name="name" required="required" maxlength="50" value="${recipeData.name}"/><span class="fieldError">${name_error }</span><br><br>
+			Beskrivning:<br><textarea class="form-control" rows="25" cols="108" id="content" name="content" maxlength="1001">${recipeData.content}</textarea><br><span class="fieldError">${content_error }</span><br><br>
+			<div class="ingredientGroup" style="width:180px">Ny ingrediens:<br><input class="form-control" id="newIngredient"/></div>
 			<br>
 			<button type='button' id="addIngredient">Lägg till</button><br>
 			<div>
-				<ul id="ingredientList">
+				<ul id="ingredientList" class="list-group">
 					<c:forEach items="${recipeData.ingredients}" var="ingredient">
-						<li><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.content}</li>
+						<li class="list-group-item"><input type="checkbox" name="ingredients" value="${ingredient.id}" checked>${ingredient.content}</li>
 					</c:forEach>
 				</ul>
 		  </div>
